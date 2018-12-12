@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -49,6 +50,6 @@ public class MainActivity extends AppCompatActivity implements FoodItemFragment.
 
     @Override
     public void onListSelect(FoodItem item) {
-
+        Log.d("Food item in activity", item.getName());
     }
 }

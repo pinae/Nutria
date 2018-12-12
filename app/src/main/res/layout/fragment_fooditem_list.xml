@@ -21,10 +21,10 @@
             android:layout_height="wrap_content" />
 
         <ImageButton
-            android:id="@+id/search"
+            android:id="@+id/searchButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/searchEntry"
+            android:layout_alignEnd="@+id/searchEntry"
             android:background="@null"
             android:src="@android:drawable/ic_menu_search"
             android:visibility="visible" />
@@ -40,7 +40,7 @@
         android:visibility="invisible" />
 
     <TextView
-        android:id="@+id/domainListEmpty"
+        android:id="@+id/foodListEmpty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"

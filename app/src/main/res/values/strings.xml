@@ -4,4 +4,8 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="no_food">No food found.</string>
+    <string name="food_category_image">Food category image</string>
+    <string name="selfmade">selfmade</string>
+    <string name="recipe_by">recipe by </string>
+    <string name="harvested">harvested</string>
 </resources>
