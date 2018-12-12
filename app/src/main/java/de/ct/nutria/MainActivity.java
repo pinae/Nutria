@@ -7,9 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+import de.ct.nutria.foodSelector.FoodItem;
+import de.ct.nutria.foodSelector.FoodItemFragment;
+
+public class MainActivity extends AppCompatActivity implements FoodItemFragment.OnListSelect {
 
     private TextView mTextMessage;
+    private FoodItemFragment foodListFragment;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -36,9 +40,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //foodListFragment = (FoodItemFragment) getFragmentManager().findFragmentById(R.id.FoodList);
+
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
+    @Override
+    public void onListSelect(FoodItem item) {
+
+    }
 }

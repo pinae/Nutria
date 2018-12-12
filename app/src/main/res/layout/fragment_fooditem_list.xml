@@ -1,5 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp">
+
+    <RelativeLayout
+        android:id="@+id/searchEntryLine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/searchEntry"
+            android:inputType="text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+
+        <ImageButton
+            android:id="@+id/search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/searchEntry"
+            android:background="@null"
+            android:src="@android:drawable/ic_menu_search"
+            android:visibility="visible" />
+
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/foodList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/searchEntryLine"
+        android:drawSelectorOnTop="false"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/domainListEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/no_food"
+        android:textColor="#ffa0a0a0"
+        android:textSize="50sp"
+        android:textStyle="bold"
+        android:layout_below="@+id/searchEntryLine" />
+
+</RelativeLayout>
+
+<!--
+<android.support.v7.widget.RecyclerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/list"
@@ -10,4 +65,4 @@
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
     tools:context=".foodSelector.FoodItemFragment"
-    tools:listitem="@layout/fragment_fooditem" />
+    tools:listitem="@layout/fragment_fooditem" />-->
