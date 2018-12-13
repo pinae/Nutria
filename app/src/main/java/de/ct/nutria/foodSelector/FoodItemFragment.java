@@ -172,7 +172,9 @@ public class FoodItemFragment extends Fragment implements AdapterView.OnItemClic
     }
 
     private int getIcon(int categoryId) {
-        return R.drawable.ic_category_6;
+        if (categoryId == 1) return R.drawable.ic_category_1;
+        if (categoryId == 6) return R.drawable.ic_category_6;
+        return R.drawable.ic_tupperdose;
     }
 
     private void requestQueryFromNutriaDb(CharSequence query) {

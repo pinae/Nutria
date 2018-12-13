@@ -3,4 +3,7 @@
     <dimen name="text_margin">16dp</dimen>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fooditem_margin_top">4dp</dimen>
+    <dimen name="fooditem_name_size">18sp</dimen>
+    <dimen name="fooditem_additional_text_size">12sp</dimen>
 </resources>

@@ -24,10 +24,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/text_margin"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="@dimen/fooditem_margin_top"
             android:text="@string/no_food"
             android:textAppearance="?attr/textAppearanceListItem"
-            android:textSize="24sp" />
+            android:textSize="@dimen/fooditem_name_size" />
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -38,9 +38,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/text_margin"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/fooditem_margin_top"
                 android:gravity="start"
-                android:textSize="12sp"
+                android:textSize="@dimen/fooditem_additional_text_size"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -48,9 +48,9 @@
                 android:id="@+id/listCalories"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/fooditem_margin_top"
                 android:textColor="@color/colorAccent"
-                android:textSize="12sp"
+                android:textSize="@dimen/fooditem_additional_text_size"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
