@@ -173,6 +173,7 @@ public class FoodItemFragment extends Fragment implements AdapterView.OnItemClic
 
     private int getIcon(int categoryId) {
         if (categoryId == 1) return R.drawable.ic_category_1;
+        if (categoryId == 2) return R.drawable.ic_category_2;
         if (categoryId == 6) return R.drawable.ic_category_6;
         return R.drawable.ic_tupperdose;
     }
@@ -191,7 +192,7 @@ public class FoodItemFragment extends Fragment implements AdapterView.OnItemClic
         foodList.add(i1);
         FoodItem i2 = new FoodItem("Apfel");
         i2.setType(0);
-        i2.setCategory(1, "Obst");
+        i2.setCategory(6, "Obst");
         i2.setCalories(82);
         i2.setAuthorName("Max Mustermann");
         foodList.add(i2);
