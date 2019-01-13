@@ -1,9 +1,11 @@
 package de.ct.nutria.foodSelector;
 
+import android.app.Fragment;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -17,6 +19,8 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import org.json.JSONException;
+
 import de.ct.nutria.R;
 
 import java.util.ArrayList;
@@ -28,7 +32,8 @@ import java.util.HashMap;
  * Activities containing this fragment MUST implement the {@link OnListSelect}
  * interface.
  */
-public class FoodItemFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class FoodItemFragment extends Fragment implements AdapterView.OnItemClickListener,
+        NutriaRequestCallback {
     private String PARCELABLE_FOOD_LIST = "de.ct.nutria.foodSelector.FoodItemFragment.foodList";
     private OnListSelect listSelectListener;
     private ArrayList<FoodItem> foodList;
@@ -36,6 +41,8 @@ public class FoodItemFragment extends Fragment implements AdapterView.OnItemClic
     private TextView emptyView;
     private EditText searchEntry;
     private ImageButton searchButton;
+    private NutriaHeadlessNetworkFragment nutriaNetworkFragment;
+    private boolean nutriaRequestOngoing = false;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -59,6 +66,8 @@ public class FoodItemFragment extends Fragment implements AdapterView.OnItemClic
             // Read arguments from Bundle
             foodList = savedInstanceState.getParcelableArrayList(PARCELABLE_FOOD_LIST);
         }
+        nutriaNetworkFragment = NutriaHeadlessNetworkFragment.getInstance(
+                getActivity().getFragmentManager());
     }
 
     @Override
@@ -180,7 +189,53 @@ public class FoodItemFragment extends Fragment implements AdapterView.OnItemClic
     }
 
     private void requestQueryFromNutriaDb(CharSequence query) {
+        if (!this.nutriaRequestOngoing && this.nutriaNetworkFragment != null) {
+            try {
+                this.nutriaNetworkFragment.doQuery(query);
+                this.nutriaRequestOngoing = true;
+            } catch (JSONException e) {
+                Log.e("JSON error in payload", e.getMessage());
+            }
+        } //TODO: Decide what to do if a request is already running.
         createDummyList();
+    }
+
+    @Override
+    public void updateFromRequest(Object result) {
+
+    }
+
+    @Override
+    public NetworkInfo getActiveNetworkInfo() {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo;
+    }
+
+    @Override
+    public void onProgressUpdate(int progressCode) {
+        switch(progressCode) {
+            // You can add UI behavior for progress updates here.
+            case Progress.ERROR:
+                break;
+            case Progress.CONNECT_SUCCESS:
+                break;
+            case Progress.GET_INPUT_STREAM_SUCCESS:
+                break;
+            case Progress.PROCESS_INPUT_STREAM_IN_PROGRESS:
+                break;
+            case Progress.PROCESS_INPUT_STREAM_SUCCESS:
+                break;
+        }
+    }
+
+    @Override
+    public void finishRequest() {
+        this.nutriaRequestOngoing = false;
+        if (this.nutriaNetworkFragment != null) {
+            this.nutriaNetworkFragment.cancelRequest();
+        }
     }
 
     private void createDummyList() {
