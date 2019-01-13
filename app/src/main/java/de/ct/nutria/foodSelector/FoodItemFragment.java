@@ -174,6 +174,7 @@ public class FoodItemFragment extends Fragment implements AdapterView.OnItemClic
     private int getIcon(int categoryId) {
         if (categoryId == 1) return R.drawable.ic_category_1;
         if (categoryId == 2) return R.drawable.ic_category_2;
+        if (categoryId == 3) return R.drawable.ic_category_3;
         if (categoryId == 6) return R.drawable.ic_category_6;
         return R.drawable.ic_tupperdose;
     }
@@ -203,5 +204,12 @@ public class FoodItemFragment extends Fragment implements AdapterView.OnItemClic
         i3.setCalories(564);
         i3.setAuthorName("Andreas Adipositas");
         foodList.add(i3);
+        FoodItem i4 = new FoodItem("Salz");
+        i4.setType(0);
+        i4.setManufacturer("Bad Reichenhaller");
+        i4.setCategory(3, "Gewürz");
+        i4.setCalories(1);
+        i4.setAuthorName("Andreas Adipositas");
+        foodList.add(i4);
     }
 }
