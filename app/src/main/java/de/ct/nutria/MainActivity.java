@@ -9,7 +9,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import de.ct.nutria.foodSelector.FoodItem;
+import foodSelector.FoodItem;
 import de.ct.nutria.foodSelector.FoodItemFragment;
 import de.ct.nutria.foodSelector.NutriaRequestCallback;
 

@@ -22,6 +22,7 @@ import android.widget.TextView;
 import org.json.JSONException;
 
 import de.ct.nutria.R;
+import foodSelector.FoodItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
