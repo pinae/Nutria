@@ -1,5 +1,6 @@
 package de.ct.nutria;
 
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -10,8 +11,9 @@ import android.widget.TextView;
 
 import de.ct.nutria.foodSelector.FoodItem;
 import de.ct.nutria.foodSelector.FoodItemFragment;
+import de.ct.nutria.foodSelector.NutriaRequestCallback;
 
-public class MainActivity extends AppCompatActivity implements FoodItemFragment.OnListSelect {
+public class MainActivity extends AppCompatActivity implements FoodItemFragment.OnListSelect, NutriaRequestCallback<String> {
 
     private TextView mTextMessage;
     private FoodItemFragment foodListFragment;
@@ -51,5 +53,26 @@ public class MainActivity extends AppCompatActivity implements FoodItemFragment.
     @Override
     public void onListSelect(FoodItem item) {
         Log.d("Food item in activity", item.getName());
+    }
+
+
+    @Override
+    public void updateFromRequest(String result) {
+
+    }
+
+    @Override
+    public NetworkInfo getActiveNetworkInfo() {
+        return null;
+    }
+
+    @Override
+    public void onProgressUpdate(int progressCode) {
+
+    }
+
+    @Override
+    public void finishRequest() {
+
     }
 }
