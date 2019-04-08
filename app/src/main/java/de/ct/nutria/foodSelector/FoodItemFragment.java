@@ -190,14 +190,14 @@ public class FoodItemFragment extends Fragment implements AdapterView.OnItemClic
     }
 
     private void requestQueryFromNutriaDb(CharSequence query) {
-        if (!this.nutriaRequestOngoing && this.nutriaNetworkFragment != null) {
+        /*if (!this.nutriaRequestOngoing && this.nutriaNetworkFragment != null) {
             try {
                 this.nutriaNetworkFragment.doQuery(query);
                 this.nutriaRequestOngoing = true;
             } catch (JSONException e) {
                 Log.e("JSON error in payload", e.getMessage());
             }
-        } //TODO: Decide what to do if a request is already running.
+        }*/ //TODO: Decide what to do if a request is already running.
         createDummyList();
     }
 
