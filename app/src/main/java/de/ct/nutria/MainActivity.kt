@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.TextView
 
-import foodSelector.FoodItemFragment
+import de.ct.nutria.foodSelector.FoodItemFragment
 import de.ct.nutria.foodSelector.NutriaRequestCallback
 import kotlinx.android.synthetic.main.activity_main.navigation
 import kotlinx.android.synthetic.main.activity_main.message

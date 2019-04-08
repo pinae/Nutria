@@ -1,4 +1,4 @@
-package foodSelector
+package de.ct.nutria.foodSelector
 
 import android.app.Fragment
 import android.content.Context
@@ -18,7 +18,6 @@ import android.widget.SimpleAdapter
 import de.ct.nutria.FoodItem
 
 import de.ct.nutria.R
-import de.ct.nutria.foodSelector.NutriaRequestCallback
 import kotlinx.android.synthetic.main.fragment_fooditem_list.*
 
 import java.util.ArrayList
@@ -36,7 +35,7 @@ import java.util.HashMap
  * fragment (e.g. upon screen orientation changes).
  */
 class FoodItemFragment : Fragment(), AdapterView.OnItemClickListener, NutriaRequestCallback<String> {
-    private val PARCELABLE_FOOD_LIST = "foodSelector.FoodItemFragment.foodArray"
+    private val PARCELABLE_FOOD_LIST = "de.ct.nutria.foodSelector.FoodItemFragment.foodArray"
     private var listSelectListener: OnListSelect? = null
     private var foodArray: ArrayList<FoodItem>? = null
     //private var nutriaNetworkFragment: NutriaHeadlessNetworkFragment? = null
