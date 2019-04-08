@@ -1,6 +1,6 @@
 package de.ct.nutria.foodSelector
 
-import android.app.Fragment
+import android.support.v4.app.Fragment
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
@@ -34,8 +34,8 @@ import java.util.HashMap
  * Mandatory empty constructor for the fragment manager to instantiate the
  * fragment (e.g. upon screen orientation changes).
  */
-class FoodItemFragment : Fragment(), AdapterView.OnItemClickListener, NutriaRequestCallback<String> {
-    private val PARCELABLE_FOOD_LIST = "de.ct.nutria.foodSelector.FoodItemFragment.foodArray"
+class FoodSearchFragment :Fragment(), AdapterView.OnItemClickListener, NutriaRequestCallback<String> {
+    private val PARCELABLE_FOOD_LIST = "de.ct.nutria.foodSelector.FoodSearchFragment.foodArray"
     private var listSelectListener: OnListSelect? = null
     private var foodArray: ArrayList<FoodItem>? = null
     //private var nutriaNetworkFragment: NutriaHeadlessNetworkFragment? = null
@@ -46,7 +46,7 @@ class FoodItemFragment : Fragment(), AdapterView.OnItemClickListener, NutriaRequ
         foodArray = ArrayList()
         if (arguments != null && savedInstanceState != null) {
             // Read arguments from Bundle
-            foodArray = savedInstanceState!!.getParcelableArrayList(PARCELABLE_FOOD_LIST)
+            foodArray = savedInstanceState.getParcelableArrayList(PARCELABLE_FOOD_LIST)
         }
         //nutriaNetworkFragment = NutriaHeadlessNetworkFragment.getInstance(
         //        activity.fragmentManager)
@@ -175,9 +175,14 @@ class FoodItemFragment : Fragment(), AdapterView.OnItemClickListener, NutriaRequ
 
     }
 
-    override fun getActiveNetworkInfo(): NetworkInfo {
-        val connectivityManager = activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        return connectivityManager.activeNetworkInfo
+    override fun getActiveNetworkInfo(): NetworkInfo? {
+        if (activity != null) {
+            val connectivityManager = activity!!.getSystemService(
+                    Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            return connectivityManager.activeNetworkInfo
+        } else {
+            return null
+        }
     }
 
     override fun onProgressUpdate(progressCode: Int) {
@@ -236,8 +241,8 @@ class FoodItemFragment : Fragment(), AdapterView.OnItemClickListener, NutriaRequ
 
     companion object {
 
-        fun newInstance(): FoodItemFragment {
-            val fragment = FoodItemFragment()
+        fun newInstance(): FoodSearchFragment {
+            val fragment = FoodSearchFragment()
             val args = Bundle()
             fragment.arguments = args
             return fragment

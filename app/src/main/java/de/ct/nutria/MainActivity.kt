@@ -7,15 +7,15 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.TextView
 
-import de.ct.nutria.foodSelector.FoodItemFragment
+import de.ct.nutria.foodSelector.FoodSearchFragment
 import de.ct.nutria.foodSelector.NutriaRequestCallback
 import kotlinx.android.synthetic.main.activity_main.navigation
 import kotlinx.android.synthetic.main.activity_main.message
 
-class MainActivity : AppCompatActivity(), FoodItemFragment.OnListSelect, NutriaRequestCallback<String> {
+class MainActivity : AppCompatActivity(), FoodSearchFragment.OnListSelect, NutriaRequestCallback<String> {
 
     private var mTextMessage: TextView? = null
-    private val foodListFragment: FoodItemFragment? = null
+    private val foodListFragment: FoodSearchFragment? = null
 
     private val mOnNavigationItemSelectedListener =
             BottomNavigationView.OnNavigationItemSelectedListener { item ->
@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity(), FoodItemFragment.OnListSelect, NutriaR
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //foodListFragment = (FoodItemFragment) getFragmentManager().findFragmentById(R.id.FoodList);
+        //foodListFragment = (FoodSearchFragment) getFragmentManager().findFragmentById(R.id.FoodList);
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
     }
