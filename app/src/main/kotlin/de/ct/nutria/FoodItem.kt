@@ -1,4 +1,4 @@
-package foodSelector
+package de.ct.nutria
 
 import android.os.Parcel
 import android.os.Parcelable

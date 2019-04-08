@@ -15,6 +15,7 @@ import android.widget.AdapterView
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.SimpleAdapter
+import de.ct.nutria.FoodItem
 
 import de.ct.nutria.R
 import de.ct.nutria.foodSelector.NutriaRequestCallback
