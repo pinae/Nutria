@@ -1,17 +1,17 @@
 package de.ct.nutria
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 
-class LoggedFoodViewModel :ViewModel() {
-    private val loggedFood :MutableLiveData<List<FoodItem>> by lazy {
+class LoggedFoodViewModel : ViewModel() {
+    private val loggedFood : MutableLiveData<List<FoodItem>> by lazy {
         MutableLiveData<List<FoodItem>>().also {
             loadLoggedFood()
         }
     }
 
-    fun getloggedFood() :LiveData<List<FoodItem>> {
+    fun getloggedFood() : LiveData<List<FoodItem>> {
         return loggedFood
     }
 

@@ -1,6 +1,5 @@
 package de.ct.nutria.foodSelector
 
-import android.support.v4.app.Fragment
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
@@ -15,6 +14,9 @@ import android.widget.AdapterView
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.SimpleAdapter
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import de.ct.nutria.FoodItem
 
 import de.ct.nutria.R
@@ -34,7 +36,7 @@ import java.util.HashMap
  * Mandatory empty constructor for the fragment manager to instantiate the
  * fragment (e.g. upon screen orientation changes).
  */
-class FoodSearchFragment :Fragment(), AdapterView.OnItemClickListener, NutriaRequestCallback<String> {
+class FoodSearchFragment : Fragment(), AdapterView.OnItemClickListener, NutriaRequestCallback<String> {
     private val PARCELABLE_FOOD_LIST = "de.ct.nutria.foodSelector.FoodSearchFragment.foodArray"
     private var listSelectListener: OnListSelect? = null
     private var foodArray: ArrayList<FoodItem>? = null
@@ -43,6 +45,12 @@ class FoodSearchFragment :Fragment(), AdapterView.OnItemClickListener, NutriaReq
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (activity != null) {
+            val foundFoodModel = ViewModelProviders.of(activity!!).get(FoundFoodViewModel::class.java)
+            foundFoodModel.getFood().observe(activity!!, Observer<List<FoodItem>> { foodItems ->
+                // update UI
+            })
+        }
         foodArray = ArrayList()
         if (arguments != null && savedInstanceState != null) {
             // Read arguments from Bundle

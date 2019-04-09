@@ -1,18 +1,18 @@
 package de.ct.nutria.foodSelector
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import de.ct.nutria.FoodItem
 
 class FoundFoodViewModel : ViewModel() {
-    private val foundFood :MutableLiveData<List<FoodItem>> by lazy {
+    private val foundFood : MutableLiveData<List<FoodItem>> by lazy {
         MutableLiveData<List<FoodItem>>().also {
             searchFood("")
         }
     }
 
-    fun getFood() :LiveData<List<FoodItem>> {
+    fun getFood() : LiveData<List<FoodItem>> {
         return foundFood
     }
 
