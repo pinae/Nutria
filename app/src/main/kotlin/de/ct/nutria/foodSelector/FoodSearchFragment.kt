@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProviders
 import de.ct.nutria.FoodItem
 
 import de.ct.nutria.R
+import de.ct.nutria.getIcon
 import kotlinx.android.synthetic.main.fragment_fooditem_list.*
 
 import java.util.ArrayList
@@ -158,13 +159,6 @@ class FoodSearchFragment : Fragment(), AdapterView.OnItemClickListener, NutriaRe
         foodList.adapter = adapter
         foodList.visibility = if (displayFoodList.size > 0) View.VISIBLE else View.INVISIBLE
         foodListEmpty.visibility = if (displayFoodList.size <= 0) View.VISIBLE else View.INVISIBLE
-    }
-
-    private fun getIcon(categoryId: Int): Int {
-        if (categoryId == 1) return R.drawable.ic_category_1
-        if (categoryId == 2) return R.drawable.ic_category_2
-        if (categoryId == 3) return R.drawable.ic_category_3
-        return if (categoryId == 6) R.drawable.ic_category_6 else R.drawable.ic_tupperdose
     }
 
     private fun requestQueryFromNutriaDb(query: CharSequence) {
