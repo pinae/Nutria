@@ -1,6 +1,5 @@
 package de.ct.nutria
 
-import android.net.NetworkInfo
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
