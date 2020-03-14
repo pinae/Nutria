@@ -1,8 +1,6 @@
 package de.ct.nutria.foodSelector
 
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,7 +15,7 @@ import android.widget.SimpleAdapter
 import androidx.fragment.app.Fragment
 import de.ct.nutria.*
 
-import kotlinx.android.synthetic.main.fragment_fooditem_list.*
+import kotlinx.android.synthetic.main.fragment_fooditem_query.*
 
 import java.util.ArrayList
 import java.util.HashMap
@@ -61,7 +59,7 @@ class FoodSearchFragment : Fragment(), AdapterView.OnItemClickListener, FoodItem
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_fooditem_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_fooditem_query, container, false)
         view.findViewById<ListView>(R.id.foodList)?.onItemClickListener = this
         view.findViewById<EditText>(R.id.searchEntry)?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
