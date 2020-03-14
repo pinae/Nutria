@@ -1,49 +1,60 @@
 package de.ct.nutria
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-import de.ct.nutria.foodSelector.FoodSearchFragment
-import kotlinx.android.synthetic.main.activity_main.navigation
-import kotlinx.android.synthetic.main.activity_main.message
+import de.ct.nutria.LoggedFooditemFragment
+import de.ct.nutria.dummy.DummyContent
+import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), FoodSearchFragment.OnListSelect{
+class MainActivity : AppCompatActivity(), LoggedFooditemFragment.OnListFragmentInteractionListener {
 
     private var mTextMessage: TextView? = null
-    private val foodListFragment: FoodSearchFragment? = null
+    private val loggedFooditemFragment: LoggedFooditemFragment? = null
 
-    private val mOnNavigationItemSelectedListener =
+    private val navigationItemSelectedListener =
             BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
-            R.id.navigation_home -> {
-                message.setText(R.string.title_home)
+            R.id.navigation_loggedFood -> {
+                message.setText(R.string.navigation_label_food)
+                addButtonAddFood()
                 return@OnNavigationItemSelectedListener true
             }
-            R.id.navigation_dashboard -> {
-                message.setText(R.string.title_dashboard)
+            R.id.navigation_recipes -> {
+                message.setText(R.string.navigation_label_recipes)
+                addButton.visibility = View.INVISIBLE
                 return@OnNavigationItemSelectedListener true
             }
-            R.id.navigation_notifications -> {
-                message.setText(R.string.title_notifications)
+            R.id.navigation_preferences -> {
+                message.setText(R.string.navigation_label_preferences)
+                addButton.visibility = View.INVISIBLE
                 return@OnNavigationItemSelectedListener true
             }
         }
         false
     }
 
+    private fun addButtonAddFood() {
+        addButton.visibility = View.VISIBLE
+        addButton.setOnClickListener {
+            val intent = Intent(this, SearchFoodActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        //foodListFragment = (FoodSearchFragment) getFragmentManager().findFragmentById(R.id.FoodList);
-
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        addButtonAddFood()
+        navigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener)
     }
 
-    override fun onListSelect(item: FoodItem) {
-        Log.d("Food item in activity", item.name)
+    override fun onListFragmentInteraction(item: DummyContent.DummyItem?) {
+        TODO("Not yet implemented")
     }
 }

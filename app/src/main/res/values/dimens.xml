@@ -6,4 +6,5 @@
     <dimen name="fooditem_margin_top">4dp</dimen>
     <dimen name="fooditem_name_size">18sp</dimen>
     <dimen name="fooditem_additional_text_size">12sp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>
