@@ -15,12 +15,8 @@ import android.widget.EditText
 import android.widget.ListView
 import android.widget.SimpleAdapter
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import de.ct.nutria.FoodItem
+import de.ct.nutria.*
 
-import de.ct.nutria.R
-import de.ct.nutria.getIcon
 import kotlinx.android.synthetic.main.fragment_fooditem_list.*
 
 import java.util.ArrayList
@@ -37,28 +33,30 @@ import java.util.HashMap
  * Mandatory empty constructor for the fragment manager to instantiate the
  * fragment (e.g. upon screen orientation changes).
  */
-class FoodSearchFragment : Fragment(), AdapterView.OnItemClickListener, NutriaRequestCallback<String> {
-    private val PARCELABLE_FOOD_LIST = "de.ct.nutria.foodSelector.FoodSearchFragment.foodArray"
+class FoodSearchFragment : Fragment(), AdapterView.OnItemClickListener, FoodItemRepositoryListener {
+    private val parcelableFoodList = "de.ct.nutria.foodSelector.FoodSearchFragment.foodArray"
     private var listSelectListener: OnListSelect? = null
-    private var foodArray: ArrayList<FoodItem>? = null
-    //private var nutriaNetworkFragment: NutriaHeadlessNetworkFragment? = null
-    private var nutriaRequestOngoing = false
+    private var repository: FoodItemRepository? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (activity != null) {
-            val foundFoodModel = ViewModelProviders.of(activity!!).get(FoundFoodViewModel::class.java)
-            foundFoodModel.getFood().observe(activity!!, Observer<List<FoodItem>> { foodItems ->
+        //if (activity != null) {
+            //val foundFoodModel = ViewModelProviders.of(activity!!).get(FoundFoodViewModel::class.java)
+            //foundFoodModel.getFood().observe(activity!!, Observer<List<FoodItem>> { foodItems ->
                 // update UI
-            })
-        }
-        foodArray = ArrayList()
+            //})
+        //}
+        repository = FoodItemRepository(this)
+        repository?.let{ it.manSt = ManufacturerDescriptionStrings(
+                recipeBy = getString(R.string.recipe_by),
+                selfmade = getString(R.string.selfmade),
+                harvested = getString(R.string.harvested)) }
         if (arguments != null && savedInstanceState != null) {
             // Read arguments from Bundle
-            foodArray = savedInstanceState.getParcelableArrayList(PARCELABLE_FOOD_LIST)
+            val savedFoodArray: ArrayList<FoodItem>? = savedInstanceState.getParcelableArrayList(
+                    parcelableFoodList)
+            if (savedFoodArray != null) repository!!.foodArray = savedFoodArray
         }
-        //nutriaNetworkFragment = NutriaHeadlessNetworkFragment.getInstance(
-        //        activity.fragmentManager)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -98,13 +96,14 @@ class FoodSearchFragment : Fragment(), AdapterView.OnItemClickListener, NutriaRe
 
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
         super.onSaveInstanceState(savedInstanceState)
-        savedInstanceState.putParcelableArrayList(PARCELABLE_FOOD_LIST, foodArray)
+        if (repository != null) savedInstanceState.putParcelableArrayList(
+                parcelableFoodList, repository!!.foodArray)
     }
 
     override fun onItemClick(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
-        Log.d("Item clicked with no", Integer.toString(i))
-        if (this.listSelectListener != null && foodArray != null)
-            this.listSelectListener!!.onListSelect(foodArray!![i])
+        Log.d("Item clicked with no", i.toString())
+        if (this.listSelectListener != null && repository != null)
+            this.listSelectListener!!.onListSelect(repository!!.foodArray[i])
     }
 
     /**
@@ -124,36 +123,31 @@ class FoodSearchFragment : Fragment(), AdapterView.OnItemClickListener, NutriaRe
         test.setCategory(1, "test")
         test.calories = 423.0f
         Log.d(test.name, test.caloriesString)
-        Log.d("Manufacturer", test.describeManufacturer("a ", "b", "c"))
-        var i = 0
-        if (foodArray != null) {
-            while (i < foodArray!!.size) {
-                if (!foodArray!![i].name.contains(query)) {
-                    foodArray!!.removeAt(i)
-                    i--
-                }
-                i++
-            }
-        }
-        requestQueryFromNutriaDb(query)
+        Log.d("Manufacturer", test.describeManufacturer())
+        repository!!.query(query.toString())
+        //createDummyList()
         updateList()
     }
 
     private fun updateList() {
+        val manSt = ManufacturerDescriptionStrings(
+                recipeBy = getString(R.string.recipe_by),
+                selfmade = getString(R.string.selfmade),
+                harvested = getString(R.string.harvested))
         val displayFoodList = ArrayList<HashMap<String, String>>()
-        if (foodArray != null) for (item in foodArray!!) {
+        if (repository != null) for (item in repository!!.foodArray) {
+            item.manSt = manSt
             val entry = HashMap<String, String>()
             entry["foodName"] = item.name
-            entry["manufacturer"] = item.describeManufacturer(
-                    getString(R.string.recipe_by),
-                    getString(R.string.selfmade),
-                    getString(R.string.harvested))
+            entry["manufacturer"] = item.describeManufacturer()
             entry["calories"] = item.caloriesString
+            entry["reference_amount"] = item.referenceAmountString
             entry["iconID"] = getIcon(item.categoryId).toString() + ""
             displayFoodList.add(entry)
         }
-        val fromArray = arrayOf("foodName", "manufacturer", "calories", "iconID")
-        val viewIndexes = intArrayOf(R.id.listFoodName, R.id.listManufacturer, R.id.listCalories, R.id.listCategoryIcon)
+        val fromArray = arrayOf("foodName", "manufacturer", "calories", "reference_amount", "iconID")
+        val viewIndexes = intArrayOf(R.id.listFoodName, R.id.listManufacturer,
+                R.id.listCalories, R.id.listReferenceAmount, R.id.listCategoryIcon)
         val adapter = SimpleAdapter(activity, displayFoodList,
                 R.layout.fragment_fooditem, fromArray, viewIndexes)
         foodList.adapter = adapter
@@ -161,84 +155,39 @@ class FoodSearchFragment : Fragment(), AdapterView.OnItemClickListener, NutriaRe
         foodListEmpty.visibility = if (displayFoodList.size <= 0) View.VISIBLE else View.INVISIBLE
     }
 
-    private fun requestQueryFromNutriaDb(query: CharSequence) {
-        /*if (!this.nutriaRequestOngoing && this.nutriaNetworkFragment != null) {
-            try {
-                this.nutriaNetworkFragment.doQuery(query);
-                this.nutriaRequestOngoing = true;
-            } catch (JSONException e) {
-                Log.e("JSON error in payload", e.getMessage());
-            }
-        }*/ //TODO: Decide what to do if a request is already running.
-        createDummyList()
-    }
-
-    override fun updateFromRequest(result: String) {
-
-    }
-
-    override fun getActiveNetworkInfo(): NetworkInfo? {
-        if (activity != null) {
-            val connectivityManager = activity!!.getSystemService(
-                    Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            return connectivityManager.activeNetworkInfo
-        } else {
-            return null
-        }
-    }
-
-    override fun onProgressUpdate(progressCode: Int) {
-        when (progressCode) {
-            // You can add UI behavior for progress updates here.
-            NutriaRequestCallback.Progress.ERROR -> {
-            }
-            NutriaRequestCallback.Progress.CONNECT_SUCCESS -> {
-            }
-            NutriaRequestCallback.Progress.GET_INPUT_STREAM_SUCCESS -> {
-            }
-            NutriaRequestCallback.Progress.PROCESS_INPUT_STREAM_IN_PROGRESS -> {
-            }
-            NutriaRequestCallback.Progress.PROCESS_INPUT_STREAM_SUCCESS -> {
-            }
-        }
-    }
-
-    override fun finishRequest() {
-        this.nutriaRequestOngoing = false
-        /*if (this.nutriaNetworkFragment != null) {
-            this.nutriaNetworkFragment!!.cancelRequest()
-        }*/
+    override fun onFoodItemRepositoryUpdate() {
+        updateList()
+        // Update Spinner
     }
 
     private fun createDummyList() {
-        if (foodArray == null) foodArray = ArrayList()
-        foodArray!!.clear()
+        repository!!.foodArray.clear()
         val i1 = FoodItem("Banane")
         i1.type = 0
         i1.setCategory(1, "Obst")
         i1.calories = 123f
         i1.authorName = "Max Mustermann"
-        foodArray!!.add(i1)
+        repository!!.foodArray.add(i1)
         val i2 = FoodItem("Apfel")
         i2.type = 0
         i2.setCategory(6, "Obst")
         i2.calories = 82f
         i2.authorName = "Max Mustermann"
-        foodArray!!.add(i2)
+        repository!!.foodArray.add(i2)
         val i3 = FoodItem("Ritter Sport - Honig-Salz-Mandel")
         i3.type = 0
         i3.manufacturer = "Ritter Sport"
         i3.setCategory(2, "Schokolade")
         i3.calories = 564f
         i3.authorName = "Andreas Adipositas"
-        foodArray!!.add(i3)
+        repository!!.foodArray.add(i3)
         val i4 = FoodItem("Salz")
         i4.type = 0
         i4.manufacturer = "Bad Reichenhaller"
         i4.setCategory(3, "Gewürz")
         i4.calories = 1f
         i4.authorName = "Andreas Adipositas"
-        foodArray!!.add(i4)
+        repository!!.foodArray.add(i4)
     }
 
     companion object {

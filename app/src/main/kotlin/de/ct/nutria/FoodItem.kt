@@ -2,23 +2,31 @@ package de.ct.nutria
 
 import android.os.Parcel
 import android.os.Parcelable
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
+import org.json.JSONArray
 
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+data class ManufacturerDescriptionStrings(
+        var recipeBy: String = "recipe by",
+        var selfmade: String = "selfmade",
+        var harvested: String = "harvested")
+
 class FoodItem : Parcelable {
     var type: Int = 0
-    var id: ByteArray? = null
+    var id: Long = -1
     private var nameAddition: String? = null
     var authorName: String? = null
-    var categoryId: Int = 0
+    var categoryId: Long = 0
         private set
     var categoryName: String? = null
         private set
     var date: Date? = null
         private set
-    var ean: ByteArray? = null
+    var ean: String? = null
     var referenceAmount = java.lang.Float.NaN
     var calories = java.lang.Float.NaN
     var manufacturer: String? = null
@@ -47,6 +55,7 @@ class FoodItem : Parcelable {
     var vitaminC = java.lang.Float.NaN
     var vitaminD = java.lang.Float.NaN
     var vitaminE = java.lang.Float.NaN
+    var manSt = ManufacturerDescriptionStrings()
 
     val name: String
         get() = "$categoryName: $nameAddition"
@@ -56,6 +65,13 @@ class FoodItem : Parcelable {
             ""
         } else {
             String.format(Locale.getDefault(), "%.0f", calories)
+        }
+
+    val referenceAmountString: String
+        get() = if (java.lang.Float.isNaN(referenceAmount)) {
+            "-"
+        } else {
+            String.format(Locale.getDefault(), "%.1f g", referenceAmount)
         }
 
     internal constructor(nameAddition: String) {
@@ -68,14 +84,14 @@ class FoodItem : Parcelable {
 
     private constructor(p: Parcel) {
         type = p.readInt()
-        p.readByteArray(id)
+        id = p.readLong()
         nameAddition = p.readString()
         authorName = p.readString()
-        categoryId = p.readInt()
+        categoryId = p.readLong()
         categoryName = p.readString()
         date = Date()
         date!!.time = p.readLong()
-        p.readByteArray(ean)
+        ean = p.readString()
         referenceAmount = p.readFloat()
         calories = p.readFloat()
         manufacturer = p.readString()
@@ -106,7 +122,7 @@ class FoodItem : Parcelable {
         vitaminE = p.readFloat()
     }
 
-    fun setCategory(id: Int, categoryName: String) {
+    fun setCategory(id: Long, categoryName: String) {
         this.categoryId = id
         this.categoryName = categoryName
     }
@@ -115,15 +131,15 @@ class FoodItem : Parcelable {
         this.date = newDate
     }
 
-    fun describeManufacturer(recipeBy: String, selfmade: String, harvested: String): String {
+    fun describeManufacturer(): String {
         return when(type) {
             0 -> {
-                if (manufacturer != null && authorName != null && authorName!!.isNotEmpty()) manufacturer!!
-                else harvested
+                if (manufacturer != null) manufacturer!!
+                else manSt.harvested
             }
             1 -> {
-                if (authorName != null && authorName!!.isNotEmpty()) recipeBy + authorName!!
-                else selfmade
+                if (authorName != null && authorName!!.isNotEmpty()) manSt.recipeBy + authorName!!
+                else manSt.selfmade
             }
             else -> ""
         }
@@ -135,13 +151,13 @@ class FoodItem : Parcelable {
 
     override fun writeToParcel(out: Parcel, flags: Int) {
         out.writeInt(type)
-        out.writeByteArray(id)
+        out.writeLong(id)
         out.writeString(nameAddition)
         out.writeString(authorName)
-        out.writeInt(categoryId)
+        out.writeLong(categoryId)
         out.writeString(categoryName)
         out.writeLong(date!!.time)
-        out.writeByteArray(ean)
+        out.writeString(ean)
         out.writeFloat(referenceAmount)
         out.writeFloat(calories)
         out.writeString(manufacturer)
@@ -172,6 +188,20 @@ class FoodItem : Parcelable {
         out.writeFloat(vitaminE)
     }
 
+    fun toRoomFoodItem(): RoomFoodItem {
+        var exportEan: Long = 0
+        if (ean != null) exportEan = ean!!.toLong()
+        return RoomFoodItem(
+            uid = id,
+            categoryId = categoryId,
+            nameAddition = nameAddition,
+            calories = calories,
+            manufacturer = describeManufacturer(),
+            ean = exportEan,
+            referenceAmount = referenceAmount
+        )
+    }
+
     companion object {
         @JvmField
         val CREATOR: Parcelable.Creator<FoodItem> = object : Parcelable.Creator<FoodItem> {
@@ -182,6 +212,41 @@ class FoodItem : Parcelable {
             override fun newArray(size: Int): Array<FoodItem?> {
                 return arrayOfNulls(size)
             }
+        }
+
+        fun fromRoom(roomFoodItem: RoomFoodItem, roomFoodCategory: RoomFoodCategory): FoodItem {
+            val food = FoodItem(roomFoodItem.nameAddition!!)
+            food.id = roomFoodItem.uid
+            if (roomFoodItem.categoryId >= 0) {
+                food.categoryId = roomFoodItem.categoryId
+                if (roomFoodCategory.name != null)
+                    food.setCategory(food.categoryId, roomFoodCategory.name)
+            }
+            food.manufacturer = roomFoodItem.manufacturer
+            food.ean = roomFoodItem.ean.toString()
+            if (roomFoodItem.calories != null)
+                food.calories = roomFoodItem.calories
+            if (roomFoodItem.referenceAmount != null)
+                food.referenceAmount = roomFoodItem.referenceAmount
+            return food
+        }
+
+        fun fromJSONArray(jsonFood: JSONArray): FoodItem {
+            val food = FoodItem(jsonFood[2] as String)
+            val typeIdCategory = jsonFood[0] as String
+            food.type = typeIdCategory[0].toInt()
+            food.id = typeIdCategory.substring(1).split(":")[0].toLong()
+            food.setCategory(
+                    typeIdCategory.substring(1).split(":")[1].toLong(),
+                    jsonFood[1] as String)
+            val manufacturerOrAuthor = jsonFood[3] as String
+            if (manufacturerOrAuthor.isNotEmpty()) when (food.type) {
+                0 -> food.manufacturer = manufacturerOrAuthor
+                1 -> food.authorName = manufacturerOrAuthor
+            }
+            food.referenceAmount = (jsonFood[4] as String).toFloat()
+            food.calories = (jsonFood[5] as String).toFloat()
+            return food
         }
     }
 }

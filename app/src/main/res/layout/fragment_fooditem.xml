@@ -52,6 +52,27 @@
                 android:textColor="@color/colorAccent"
                 android:textSize="@dimen/fooditem_additional_text_size"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/listCaloriesSlash" />
+
+            <TextView
+                android:id="@+id/listCaloriesSlash"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/fooditem_margin_top"
+                android:text="@string/SeparatorSlash"
+                android:textColor="@color/colorUnimportant"
+                android:textSize="@dimen/fooditem_additional_text_size"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/listReferenceAmount" />
+
+            <TextView
+                android:id="@+id/listReferenceAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/fooditem_margin_top"
+                android:textColor="@color/colorUnimportant"
+                android:textSize="@dimen/fooditem_additional_text_size"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

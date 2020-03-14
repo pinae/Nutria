@@ -8,11 +8,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 import de.ct.nutria.foodSelector.FoodSearchFragment
-import de.ct.nutria.foodSelector.NutriaRequestCallback
 import kotlinx.android.synthetic.main.activity_main.navigation
 import kotlinx.android.synthetic.main.activity_main.message
 
-class MainActivity : AppCompatActivity(), FoodSearchFragment.OnListSelect, NutriaRequestCallback<String> {
+class MainActivity : AppCompatActivity(), FoodSearchFragment.OnListSelect{
 
     private var mTextMessage: TextView? = null
     private val foodListFragment: FoodSearchFragment? = null
@@ -47,22 +46,5 @@ class MainActivity : AppCompatActivity(), FoodSearchFragment.OnListSelect, Nutri
 
     override fun onListSelect(item: FoodItem) {
         Log.d("Food item in activity", item.name)
-    }
-
-
-    override fun updateFromRequest(result: String) {
-
-    }
-
-    override fun getActiveNetworkInfo(): NetworkInfo? {
-        return null
-    }
-
-    override fun onProgressUpdate(progressCode: Int) {
-
-    }
-
-    override fun finishRequest() {
-
     }
 }

@@ -8,4 +8,5 @@
     <string name="selfmade">selfmade</string>
     <string name="recipe_by">recipe by </string>
     <string name="harvested">harvested</string>
+    <string name="SeparatorSlash">/</string>
 </resources>

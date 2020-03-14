@@ -8,7 +8,7 @@ interface CategoryDao {
     fun getAll(): List<RoomFoodCategory>
 
     @Query("SELECT * from roomfoodcategory WHERE uid=:uid LIMIT 1")
-    fun getById(uid: Int): RoomFoodCategory
+    fun getById(uid: Long): RoomFoodCategory
 
     @Query("SELECT * from roomfoodcategory WHERE name=:name LIMIT 1")
     fun getByName(name: String): RoomFoodCategory
