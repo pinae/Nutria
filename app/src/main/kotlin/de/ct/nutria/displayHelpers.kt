@@ -1,7 +1,7 @@
 package de.ct.nutria
 
-fun getIcon(categoryId :Long) :Int {
-    return when (categoryId.toInt()) {
+fun getIcon(categoryId :Int) :Int {
+    return when (categoryId) {
         1 -> R.drawable.ic_category_1
         2 -> R.drawable.ic_category_2
         3 -> R.drawable.ic_category_3

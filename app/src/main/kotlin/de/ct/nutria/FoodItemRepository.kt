@@ -42,10 +42,10 @@ class FoodItemRepository(var listener: FoodItemRepositoryListener) {
                     "https://nutria.db.pinae.net/json/find?name=$query").readText())
             val foundFoods: JSONArray = result["food"] as JSONArray
             for (i in 0 until foundFoods.length()) {
-                val newFood = FoodItem.fromJSONArray(foundFoods[i] as JSONArray)
+                val newFood = FoodItem.fromQueryJSONArray(foundFoods[i] as JSONArray)
                 newFood.manSt = manSt
                 foodArray.add(i, newFood)
-                addToRoomDB(newFood.toRoomFoodItem())
+                addToRoomDB(newFood.toQueryFoodItem())
                 Log.i("  food", foundFoods[i].toString())
             }
             uiThread {
@@ -59,12 +59,10 @@ class FoodItemRepository(var listener: FoodItemRepositoryListener) {
 
     fun queryRoomDB(query: String) {
         Log.d("querying RoomDB", query)
-        val foodDao : FoodDao = cacheDb.foodDao()
-        val categoryDao: CategoryDao = cacheDb.categoryDao()
+        val queryFoodItemDao : QueryFoodItemDao = cacheDb.queryFoodItemDao()
         doAsync {
-            for ((foundItemCounter, roomFoodItem) in foodDao.queryFood(query).withIndex()) {
-                val roomFoodCategory = categoryDao.getById(roomFoodItem.categoryId)
-                val item = FoodItem.fromRoom(roomFoodItem, roomFoodCategory)
+            for ((foundItemCounter, roomFoodItem) in queryFoodItemDao.queryFood(query).withIndex()) {
+                val item = FoodItem.fromQueryFoodItem(roomFoodItem)
                 item.manSt = manSt
                 foodArray.add(foundItemCounter, item)
             }
@@ -75,10 +73,10 @@ class FoodItemRepository(var listener: FoodItemRepositoryListener) {
         }
     }
 
-    fun addToRoomDB(vararg foods: RoomFoodItem) {
-        val foodDao : FoodDao = cacheDb.foodDao()
+    fun addToRoomDB(vararg foods: QueryFoodItem) {
+        val queryFoodItemDao : QueryFoodItemDao = cacheDb.queryFoodItemDao()
         doAsync {
-            foodDao.insertAll(*foods)
+            queryFoodItemDao.insertAll(*foods)
         }
     }
 }

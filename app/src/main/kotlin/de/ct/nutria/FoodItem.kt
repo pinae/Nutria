@@ -2,63 +2,73 @@ package de.ct.nutria
 
 import android.os.Parcel
 import android.os.Parcelable
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 import org.json.JSONArray
-
+import java.time.OffsetDateTime
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.ColumnInfo
+import androidx.room.Ignore
+import androidx.room.TypeConverters
+import org.json.JSONObject
 
 data class ManufacturerDescriptionStrings(
         var recipeBy: String = "recipe by",
         var selfmade: String = "selfmade",
         var harvested: String = "harvested")
 
-class FoodItem : Parcelable {
-    var type: Int = 0
-    var id: Long = -1
-    private var nameAddition: String? = null
-    var authorName: String? = null
-    var categoryId: Long = 0
-        private set
-    var categoryName: String? = null
-        private set
-    var date: Date? = null
-        private set
-    var ean: String? = null
-    var referenceAmount = java.lang.Float.NaN
-    var calories = java.lang.Float.NaN
-    var manufacturer: String? = null
-    var total_fat = java.lang.Float.NaN
-    var saturated_fat = java.lang.Float.NaN
-    var cholesterol = java.lang.Float.NaN
-    var protein = java.lang.Float.NaN
-    var total_carbs = java.lang.Float.NaN
-    var sugar = java.lang.Float.NaN
-    var dietary_fiber = java.lang.Float.NaN
-    var salt = java.lang.Float.NaN
-    var sodium = java.lang.Float.NaN
-    var potassium = java.lang.Float.NaN
-    var copper = java.lang.Float.NaN
-    var iron = java.lang.Float.NaN
-    var magnesium = java.lang.Float.NaN
-    var manganese = java.lang.Float.NaN
-    var zinc = java.lang.Float.NaN
-    var phosphorous = java.lang.Float.NaN
-    var sulphur = java.lang.Float.NaN
-    var chloro = java.lang.Float.NaN
-    var fluoric = java.lang.Float.NaN
-    var vitaminB1 = java.lang.Float.NaN
-    var vitaminB12 = java.lang.Float.NaN
-    var vitaminB6 = java.lang.Float.NaN
-    var vitaminC = java.lang.Float.NaN
-    var vitaminD = java.lang.Float.NaN
-    var vitaminE = java.lang.Float.NaN
-    var manSt = ManufacturerDescriptionStrings()
-
-    val name: String
+@TypeConverters(IsoTimeConverter::class)
+@Entity(tableName = "loggedFood")
+data class FoodItem (
+    @PrimaryKey
+    @ColumnInfo(name = "foodId") var id: Int = -1,
+    @ColumnInfo(name = "type") var type: Int = 0,
+    @ColumnInfo(name = "nameAddition") var nameAddition: String? = null,
+    @ColumnInfo(name = "autorName") var authorName: String? = null,
+    @ColumnInfo(name = "categoryId") var categoryId: Int = 0,
+    @ColumnInfo(name = "categoryName") var categoryName: String? = null,
+    @ColumnInfo(name = "date") var date: OffsetDateTime? = null,
+    @ColumnInfo(name = "ean") var ean: Long = -1,
+    @ColumnInfo(name = "referenceAmount") var referenceAmount: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "calories") var calories: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "manufacturer") var manufacturer: String? = null,
+    @ColumnInfo(name = "total_fat") var total_fat: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "saturated_fat") var saturated_fat: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "cholesterol") var cholesterol: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "protein") var protein: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "total_carbs") var total_carbs: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "sugar") var sugar: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "dietary_fiber") var dietary_fiber: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "salt") var salt: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "sodium") var sodium: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "potassium") var potassium: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "copper") var copper: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "iron") var iron: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "magnesium") var magnesium: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "manganese") var manganese: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "zinc") var zinc: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "phosphorous") var phosphorous: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "sulphur") var sulphur: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "chloro") var chloro: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "fluoric") var fluoric: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "vitaminB1") var vitaminB1: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "vitaminB12") var vitaminB12: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "vitaminB6") var vitaminB6: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "vitaminC") var vitaminC: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "vitaminD") var vitaminD: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "vitaminE") var vitaminE: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "relevance") var relevance: Float = 1f,
+    @ColumnInfo(name = "lastLogged") var lastLogged: OffsetDateTime? = null,
+    @Ignore var manSt: ManufacturerDescriptionStrings = ManufacturerDescriptionStrings()
+) : Parcelable {
+    var name: String
         get() = "$categoryName: $nameAddition"
+        set(value) {
+            categoryName = value.split(": ")[0]
+            nameAddition = value.split(": ")[1]
+        }
 
     val caloriesString: String
         get() = if (java.lang.Float.isNaN(calories)) {
@@ -74,24 +84,25 @@ class FoodItem : Parcelable {
             String.format(Locale.getDefault(), "%.1f g", referenceAmount)
         }
 
-    internal constructor(nameAddition: String) {
+    @Ignore
+    internal constructor(nameAddition: String) : this() {
         this.nameAddition = nameAddition
-        this.date = Calendar.getInstance().time
+        this.date = OffsetDateTime.now()
         this.categoryId = -1
         this.type = 0
         this.referenceAmount = 100.0f
     }
 
-    private constructor(p: Parcel) {
+    @Ignore
+    private constructor(p: Parcel) : this() {
         type = p.readInt()
-        id = p.readLong()
+        id = p.readInt()
         nameAddition = p.readString()
         authorName = p.readString()
-        categoryId = p.readLong()
+        categoryId = p.readInt()
         categoryName = p.readString()
-        date = Date()
-        date!!.time = p.readLong()
-        ean = p.readString()
+        date = IsoTimeConverter().stringToOffsetDateTime(p.readString())
+        ean = p.readLong()
         referenceAmount = p.readFloat()
         calories = p.readFloat()
         manufacturer = p.readString()
@@ -120,14 +131,16 @@ class FoodItem : Parcelable {
         vitaminC = p.readFloat()
         vitaminD = p.readFloat()
         vitaminE = p.readFloat()
+        relevance = p.readFloat()
+        lastLogged = IsoTimeConverter().stringToOffsetDateTime(p.readString())
     }
 
-    fun setCategory(id: Long, categoryName: String) {
+    fun setCategory(id: Int, categoryName: String) {
         this.categoryId = id
         this.categoryName = categoryName
     }
 
-    fun setCreationDate(newDate: Date) {
+    fun setCreationDate(newDate: OffsetDateTime) {
         this.date = newDate
     }
 
@@ -151,13 +164,13 @@ class FoodItem : Parcelable {
 
     override fun writeToParcel(out: Parcel, flags: Int) {
         out.writeInt(type)
-        out.writeLong(id)
+        out.writeInt(id)
         out.writeString(nameAddition)
         out.writeString(authorName)
-        out.writeLong(categoryId)
+        out.writeInt(categoryId)
         out.writeString(categoryName)
-        out.writeLong(date!!.time)
-        out.writeString(ean)
+        out.writeString(IsoTimeConverter().offsetDateTimeToString(date))
+        out.writeLong(ean)
         out.writeFloat(referenceAmount)
         out.writeFloat(calories)
         out.writeString(manufacturer)
@@ -186,19 +199,22 @@ class FoodItem : Parcelable {
         out.writeFloat(vitaminC)
         out.writeFloat(vitaminD)
         out.writeFloat(vitaminE)
+        out.writeFloat(relevance)
+        out.writeString(IsoTimeConverter().offsetDateTimeToString(lastLogged))
     }
 
-    fun toRoomFoodItem(): RoomFoodItem {
-        var exportEan: Long = 0
-        if (ean != null) exportEan = ean!!.toLong()
-        return RoomFoodItem(
-            uid = id,
-            categoryId = categoryId,
-            nameAddition = nameAddition,
-            calories = calories,
-            manufacturer = describeManufacturer(),
-            ean = exportEan,
-            referenceAmount = referenceAmount
+    fun toQueryFoodItem(): QueryFoodItem {
+        return QueryFoodItem(
+                foodId = id,
+                isRecipe = type == 1,
+                categoryId = categoryId,
+                name = name,
+                calories = calories,
+                source = describeManufacturer(),
+                ean = ean,
+                referenceAmount = referenceAmount,
+                relevance = relevance,
+                lastLogged = lastLogged
         )
     }
 
@@ -214,30 +230,77 @@ class FoodItem : Parcelable {
             }
         }
 
-        fun fromRoom(roomFoodItem: RoomFoodItem, roomFoodCategory: RoomFoodCategory): FoodItem {
-            val food = FoodItem(roomFoodItem.nameAddition!!)
-            food.id = roomFoodItem.uid
-            if (roomFoodItem.categoryId >= 0) {
-                food.categoryId = roomFoodItem.categoryId
-                if (roomFoodCategory.name != null)
-                    food.setCategory(food.categoryId, roomFoodCategory.name)
+        fun fromQueryFoodItem(queryFoodItem: QueryFoodItem): FoodItem {
+            var nameAddition = ""
+            queryFoodItem.name?.let { nameAddition = it.split(": ")[1] }
+            val food = FoodItem(nameAddition)
+            food.id = queryFoodItem.foodId
+            if (queryFoodItem.categoryId >= 0) {
+                food.categoryId = queryFoodItem.categoryId
+                if (queryFoodItem.name != null)
+                    food.setCategory(food.categoryId, queryFoodItem.name.split(": ")[0])
             }
-            food.manufacturer = roomFoodItem.manufacturer
-            food.ean = roomFoodItem.ean.toString()
-            if (roomFoodItem.calories != null)
-                food.calories = roomFoodItem.calories
-            if (roomFoodItem.referenceAmount != null)
-                food.referenceAmount = roomFoodItem.referenceAmount
+            if (queryFoodItem.isRecipe) food.authorName = queryFoodItem.source
+            else food.manufacturer = queryFoodItem.source
+            queryFoodItem.ean?.let { food.ean = it }
+            queryFoodItem.calories?.let { food.calories = it }
+            queryFoodItem.referenceAmount?.let { food.referenceAmount = it }
+            food.relevance = queryFoodItem.relevance
+            food.lastLogged = queryFoodItem.lastLogged
             return food
         }
 
-        fun fromJSONArray(jsonFood: JSONArray): FoodItem {
+        fun fromJSONObject(detailedFood: JSONObject, existingFood: FoodItem? = null): FoodItem {
+            var food = FoodItem(detailedFood["nameAddition"] as String)
+            existingFood?.let { food = it }
+            food.nameAddition = detailedFood["nameAddition"] as String
+            food.type = detailedFood["type"] as Int
+            food.id = detailedFood["id"] as Int
+            if ((detailedFood["authorName"] as String).isNotEmpty()) {
+                food.authorName = detailedFood["authorName"] as String?
+            }
+            food.categoryId = detailedFood["categoryId"] as Int
+            food.categoryName = detailedFood["categoryName"] as String?
+            food.date = IsoTimeConverter().stringToOffsetDateTime(detailedFood["date"] as String)
+            food.ean = detailedFood["ean"] as Long
+            food.referenceAmount = detailedFood["referenceAmount"] as Float
+            food.calories = detailedFood["calories"] as Float
+            food.manufacturer = detailedFood["manufacturer"] as String?
+            food.total_fat = detailedFood["total_fat"] as Float
+            food.saturated_fat = detailedFood["saturated_fat"] as Float
+            food.cholesterol = detailedFood["cholesterol"] as Float
+            food.protein = detailedFood["protein"] as Float
+            food.total_carbs = detailedFood["total_carbs"] as Float
+            food.sugar = detailedFood["sugar"] as Float
+            food.dietary_fiber = detailedFood["dietary_fiber"] as Float
+            food.salt = detailedFood["salt"] as Float
+            food.sodium = detailedFood["sodium"] as Float
+            food.potassium = detailedFood["potassium"] as Float
+            food.copper = detailedFood["copper"] as Float
+            food.iron = detailedFood["iron"] as Float
+            food.magnesium = detailedFood["magnesium"] as Float
+            food.manganese = detailedFood["manganese"] as Float
+            food.zinc = detailedFood["zinc"] as Float
+            food.phosphorous = detailedFood["phosphorous"] as Float
+            food.sulphur = detailedFood["sulphur"] as Float
+            food.chloro = detailedFood["chloro"] as Float
+            food.fluoric = detailedFood["fluoric"] as Float
+            food.vitaminB1 = detailedFood["vitaminB1"] as Float
+            food.vitaminB12 = detailedFood["vitaminB12"] as Float
+            food.vitaminB6 = detailedFood["vitaminB6"] as Float
+            food.vitaminC = detailedFood["vitaminC"] as Float
+            food.vitaminD = detailedFood["vitaminD"] as Float
+            food.vitaminE = detailedFood["vitaminE"] as Float
+            return food
+        }
+
+        fun fromQueryJSONArray(jsonFood: JSONArray): FoodItem {
             val food = FoodItem(jsonFood[2] as String)
             val typeIdCategory = jsonFood[0] as String
             food.type = typeIdCategory[0].toInt()
-            food.id = typeIdCategory.substring(1).split(":")[0].toLong()
+            food.id = typeIdCategory.substring(1).split(":")[0].toInt()
             food.setCategory(
-                    typeIdCategory.substring(1).split(":")[1].toLong(),
+                    typeIdCategory.substring(1).split(":")[1].toInt(),
                     jsonFood[1] as String)
             val manufacturerOrAuthor = jsonFood[3] as String
             if (manufacturerOrAuthor.isNotEmpty()) when (food.type) {
