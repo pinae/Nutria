@@ -1,33 +1,35 @@
 package de.ct.nutria
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.Embedded
-import androidx.room.Relation
+import androidx.room.*
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
-@Entity
-data class RoomFoodCategory(
-        @PrimaryKey val uid: Long,
-        @ColumnInfo(name = "name") val name: String?
-)
+class IsoTimeConverter {
+    @TypeConverter
+    fun stringToOffsetDateTime(value: String?): OffsetDateTime? {
+            if (value == null) return null
+            return OffsetDateTime.parse(value, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+    }
 
-@Entity
+    @TypeConverter
+    fun offsetDateTimeToString(value: OffsetDateTime?): String? {
+        if (value == null) return null
+        return value.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+    }
+}
+
+@TypeConverters(IsoTimeConverter::class)
+@Fts4
+@Entity(tableName = "food")
 data class RoomFoodItem(
-        @PrimaryKey val uid: Long,
-        val categoryId: Long,
-        @ColumnInfo(name = "nameAddition") val nameAddition: String?,
+        @PrimaryKey @ColumnInfo(name = "rowid") val id: Int,
+        @ColumnInfo(name = "isRecipe") val isRecipe: Boolean,
+        @ColumnInfo(name = "categoryId") val categoryId: Long,
+        @ColumnInfo(name = "name") val name: String?,
         @ColumnInfo(name = "calories") val calories: Float?,
-        @ColumnInfo(name = "manufacturer") val manufacturer: String?,
+        @ColumnInfo(name = "source") val source: String?,
         @ColumnInfo(name = "ean") val ean: Long?,
-        @ColumnInfo(name = "referenceAmount") val referenceAmount: Float?
-)
-
-data class RoomFoodItemWithCategory(
-        @Embedded val category: RoomFoodCategory,
-        @Relation(
-                parentColumn = "uid",
-                entityColumn = "categoryId"
-        )
-        val foods: List<RoomFoodItem>
+        @ColumnInfo(name = "referenceAmount") val referenceAmount: Float?,
+        @ColumnInfo(name = "relevance") val relevance: Float = 1f,
+        @ColumnInfo(name = "lastLogged") val lastLogged: OffsetDateTime?
 )
