@@ -27,12 +27,12 @@ class MainActivity : AppCompatActivity(), LoggedFooditemFragment.OnListFragmentI
             }
             R.id.navigation_recipes -> {
                 message.setText(R.string.navigation_label_recipes)
-                addButton.visibility = View.INVISIBLE
+                addButton.visibility = View.GONE
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_preferences -> {
                 message.setText(R.string.navigation_label_preferences)
-                addButton.visibility = View.INVISIBLE
+                addButton.visibility = View.GONE
                 return@OnNavigationItemSelectedListener true
             }
         }

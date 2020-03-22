@@ -7,4 +7,10 @@
     <dimen name="fooditem_name_size">18sp</dimen>
     <dimen name="fooditem_additional_text_size">12sp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="food_detail_name_size">24sp</dimen>
+    <dimen name="food_detail_property_size">12sp</dimen>
+    <dimen name="food_detail_property_spacing">4sp</dimen>
+    <dimen name="food_detail_property_spacing_big">8sp</dimen>
+    <dimen name="food_detail_amount_size">48sp</dimen>
+    <dimen name="food_detail_amount_width">148dp</dimen>
 </resources>

@@ -1,0 +1,914 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FoodDetailsActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:minWidth="48dp"
+                    android:minHeight="48dp"
+                    android:layout_marginEnd="@dimen/food_detail_property_spacing"
+                    app:srcCompat="@drawable/ic_category_1"
+                    android:contentDescription="@string/food_category_image" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/textViewName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/navigation_label_food"
+                        android:textSize="@dimen/food_detail_name_size"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textViewName">
+
+                        <TextView
+                            android:id="@+id/textViewManufacturer"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0"
+                            android:text="@string/harvested"
+                            android:textSize="@dimen/food_detail_property_size"
+                            android:layout_marginEnd="@dimen/food_detail_property_spacing_big" />
+
+                        <LinearLayout
+                            android:id="@+id/authorBlock"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:textSize="@dimen/food_detail_property_size"
+                                android:text="@string/at" />
+
+                            <TextView
+                                android:id="@+id/textViewAuthorName"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:textSize="@dimen/food_detail_property_size"
+                                android:text="@string/selfmade" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/eanLine"
+                    android:gravity="start"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <TextView
+                        android:id="@+id/textViewEanLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/food_detail_property_size"
+                        android:text="@string/ean_label"
+                        android:textAlignment="textStart" />
+
+                    <TextView
+                        android:id="@+id/textViewEan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/food_detail_property_size"
+                        android:layout_marginStart="@dimen/food_detail_property_spacing"
+                        android:text="@string/zero" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/textViewDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/food_detail_property_size"
+                    android:text="@string/zero"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textViewAmount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="@dimen/food_detail_amount_width"
+                        android:text="@string/hundred"
+                        android:textAlignment="textEnd"
+                        android:textSize="@dimen/food_detail_amount_size" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/gramms"
+                        android:textSize="@dimen/food_detail_amount_size" />
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/button5g"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/food_detail_property_spacing"
+                    android:background="@color/colorAccent"
+                    android:onClick="amountButtonClicked"
+                    android:text="@string/_5g"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/design_default_color_on_primary"
+                    app:cornerRadius="8sp" />
+                <Button
+                    android:id="@+id/button10g"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorAccent"
+                    android:onClick="amountButtonClicked"
+                    android:layout_margin="@dimen/food_detail_property_spacing"
+                    android:text="@string/_10g"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/design_default_color_on_primary"
+                    app:cornerRadius="8sp" />
+                <Button
+                    android:id="@+id/button25g"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorAccent"
+                    android:onClick="amountButtonClicked"
+                    android:layout_margin="@dimen/food_detail_property_spacing"
+                    android:text="@string/_25g"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/design_default_color_on_primary"
+                    app:cornerRadius="8sp" />
+                <Button
+                    android:id="@+id/button50g"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorAccent"
+                    android:onClick="amountButtonClicked"
+                    android:layout_margin="@dimen/food_detail_property_spacing"
+                    android:text="@string/_50g"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/design_default_color_on_primary"
+                    app:cornerRadius="8sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/button75g"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorAccent"
+                    android:onClick="amountButtonClicked"
+                    android:layout_margin="@dimen/food_detail_property_spacing"
+                    android:text="@string/_75g"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/design_default_color_on_primary"
+                    app:cornerRadius="8sp" />
+                <Button
+                    android:id="@+id/button100g"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorAccent"
+                    android:onClick="amountButtonClicked"
+                    android:layout_margin="@dimen/food_detail_property_spacing"
+                    android:text="@string/_100g"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/design_default_color_on_primary"
+                    app:cornerRadius="8sp" />
+                <Button
+                    android:id="@+id/button200g"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorAccent"
+                    android:onClick="amountButtonClicked"
+                    android:layout_margin="@dimen/food_detail_property_spacing"
+                    android:text="@string/_200g"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/design_default_color_on_primary"
+                    app:cornerRadius="8sp" />
+                <Button
+                    android:id="@+id/button500g"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorAccent"
+                    android:onClick="amountButtonClicked"
+                    android:layout_margin="@dimen/food_detail_property_spacing"
+                    android:text="@string/_500g"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/design_default_color_on_primary"
+                    app:cornerRadius="8dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/food_detail_property_spacing_big">
+                <TextView
+                    android:id="@+id/textViewReferenceAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hundred"
+                    android:textSize="@dimen/fooditem_name_size" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/nutrition_per_g"
+                    android:textSize="@dimen/fooditem_name_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/caloriesLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewCaloriesLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/calories_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewCalories"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/totalFatLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewTotalFatLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/total_fat_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewTotalFat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/saturatedFatLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewSaturatedFatLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="@dimen/food_detail_property_spacing_big"
+                    android:text="@string/saturated_fat_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewSaturatedFat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/cholesterolLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewCholesterolLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="@dimen/food_detail_property_spacing_big"
+                    android:text="@string/cholesterol_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewCholesterol"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/proteinLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewProteinLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/protein_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewProtein"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/totalCarbsLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewTotalCarbsLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/total_carbs_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewTotalCarbs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/sugarLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewSugarLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="@dimen/food_detail_property_spacing_big"
+                    android:text="@string/sugar_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewSugar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/dietaryFiberLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewDietaryFiberLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/dietary_fiber_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewDietaryFiber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/saltLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewSaltLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/salt_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewSalt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/sodiumLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewSodiumLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/sodium_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewSodium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/potassiumLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewPotassiumLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/potassium_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewPotassium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/copperLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewCopperLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/copper_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewCopper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ironLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewIronLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/iron_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewIron"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/magnesiumLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewMagnesiumLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/magnesium_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewMagnesium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/manganeseLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewManganeseLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/manganese_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewManganese"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/zincLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewZincLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/zinc_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewZinc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/phosphorousLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewPhosphorousLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/phosphorous_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewPhosphorous"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/sulphurLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewSulphurLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/sulphur_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewSulphur"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/chloroLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewChloroLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/chloro_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewChloro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fluoricLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewFluoricLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/fluoric_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewFluoric"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/vitaminB1Line"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewVitaminB1Label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/vitamin_b_1_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewVitaminB1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/vitaminB12Line"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewVitaminB12Label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/vitamin_b_12_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewVitaminB12"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/vitaminB6Line"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewVitaminB6Label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/vitamin_b_6_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewVitaminB6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/vitaminCLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewVitaminCLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/vitamin_c_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewVitaminC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/vitaminDLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewVitaminDLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/vitamin_d_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewVitaminD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/vitaminELine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewVitaminELabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/vitamin_e_label"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/textViewVitaminE"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/food_detail_property_spacing"
+                    android:text="@string/zero" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_save" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

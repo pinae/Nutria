@@ -7,16 +7,64 @@
     <string name="harvested">harvested</string>
     <string name="SeparatorSlash">/</string>
     <string name="zero">0</string>
-    <string name="title_activity_search_food">SearchFoodActivity</string>
+    <string name="hundred">100</string>
+    <string name="at">\@</string>
+    <string name="title_activity_search_food">Search</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
     <string name="navigation_label_food">Food</string>
     <string name="navigation_label_recipes">Recipes</string>
     <string name="navigation_label_preferences">Preferences</string>
+    <string name="title_activity_food_details">Save Food</string>
+    <string name="ean_label">EAN:</string>
+    <string name="nutrition_per_g">g contains …</string>
+    <string name="calories_label">Calories:</string>
+    <string name="total_fat_label">Fat (total):</string>
+    <string name="saturated_fat_label">Saturated Fat:</string>
+    <string name="cholesterol_label">Cholesterol:</string>
+    <string name="protein_label">Protein:</string>
+    <string name="total_carbs_label">Carbs (total):</string>
+    <string name="sugar_label">Sugar:</string>
+    <string name="dietary_fiber_label">Dietary Fiber:</string>
+    <string name="salt_label">Salt:</string>
+    <string name="sodium_label">Sodium:</string>
+    <string name="potassium_label">Potassium:</string>
+    <string name="copper_label">Copper:</string>
+    <string name="iron_label">Iron:</string>
+    <string name="magnesium_label">Magnesium:</string>
+    <string name="manganese_label">Manganese:</string>
+    <string name="zinc_label">Zinc:</string>
+    <string name="phosphorous_label">Phosphorous:</string>
+    <string name="sulphur_label">Sulphur:</string>
+    <string name="chloro_label">Chloro:</string>
+    <string name="fluoric_label">Fluoric:</string>
+    <string name="vitamin_b_1_label">Vitamin B1:</string>
+    <string name="vitamin_b_12_label">Vitamin B12:</string>
+    <string name="vitamin_b_6_label">Vitamin B6:</string>
+    <string name="vitamin_c_label">Vitamin C:</string>
+    <string name="vitamin_d_label">Vitamin D:</string>
+    <string name="vitamin_e_label">Vitamin E:</string>
+    <string name="gramms">g</string>
+    <string name="_5g">5g</string>
+    <string name="_10g">10g</string>
+    <string name="_25g">25g</string>
+    <string name="_50g">50g</string>
+    <string name="_75g">75g</string>
+    <string name="_100g">100g</string>
+    <string name="_200g">200g</string>
+    <string name="_500g">500g</string>
+    <string name="nutrition_display_float">%.2f %s</string>
+    <string name="nutrition_display_ulong">%lu %s</string>
+    <string name="nutrition_display_string">%s %s</string>
+    <string name="nutrition_display_date">yyyy-MM-dd hh:mm</string>
+    <string name="unit_kcal">kcal</string>
+    <string name="unit_g">g</string>
+    <string name="unit_mg">mg</string>
+
 </resources>

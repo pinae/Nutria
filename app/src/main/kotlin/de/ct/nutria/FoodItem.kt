@@ -2,10 +2,9 @@ package de.ct.nutria
 
 import android.os.Parcel
 import android.os.Parcelable
+import android.util.Log
 import org.json.JSONArray
 import java.time.OffsetDateTime
-import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -13,6 +12,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Ignore
 import androidx.room.TypeConverters
 import org.json.JSONObject
+import kotlin.reflect.KMutableProperty
 
 data class ManufacturerDescriptionStrings(
         var recipeBy: String = "recipe by",
@@ -26,12 +26,12 @@ data class FoodItem (
     @ColumnInfo(name = "foodId") var id: Int = -1,
     @ColumnInfo(name = "type") var type: Int = 0,
     @ColumnInfo(name = "nameAddition") var nameAddition: String? = null,
-    @ColumnInfo(name = "autorName") var authorName: String? = null,
+    @ColumnInfo(name = "author") var author: String? = null,
     @ColumnInfo(name = "categoryId") var categoryId: Int = 0,
     @ColumnInfo(name = "categoryName") var categoryName: String? = null,
     @ColumnInfo(name = "date") var date: OffsetDateTime? = null,
     @ColumnInfo(name = "ean") var ean: Long = -1,
-    @ColumnInfo(name = "referenceAmount") var referenceAmount: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "reference_amount") var reference_amount: Float = java.lang.Float.NaN,
     @ColumnInfo(name = "calories") var calories: Float = java.lang.Float.NaN,
     @ColumnInfo(name = "manufacturer") var manufacturer: String? = null,
     @ColumnInfo(name = "total_fat") var total_fat: Float = java.lang.Float.NaN,
@@ -53,12 +53,12 @@ data class FoodItem (
     @ColumnInfo(name = "sulphur") var sulphur: Float = java.lang.Float.NaN,
     @ColumnInfo(name = "chloro") var chloro: Float = java.lang.Float.NaN,
     @ColumnInfo(name = "fluoric") var fluoric: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "vitaminB1") var vitaminB1: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "vitaminB12") var vitaminB12: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "vitaminB6") var vitaminB6: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "vitaminC") var vitaminC: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "vitaminD") var vitaminD: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "vitaminE") var vitaminE: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "vitamin_b1") var vitamin_b1: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "vitamin_b12") var vitamin_b12: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "vitamin_b6") var vitamin_b6: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "vitamin_c") var vitamin_c: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "vitamin_d") var vitamin_d: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "vitamin_e") var vitamin_e: Float = java.lang.Float.NaN,
     @ColumnInfo(name = "relevance") var relevance: Float = 1f,
     @ColumnInfo(name = "lastLogged") var lastLogged: OffsetDateTime? = null,
     @Ignore var manSt: ManufacturerDescriptionStrings = ManufacturerDescriptionStrings()
@@ -78,10 +78,10 @@ data class FoodItem (
         }
 
     val referenceAmountString: String
-        get() = if (java.lang.Float.isNaN(referenceAmount)) {
+        get() = if (java.lang.Float.isNaN(reference_amount)) {
             "-"
         } else {
-            String.format(Locale.getDefault(), "%.1f g", referenceAmount)
+            String.format(Locale.getDefault(), "%.1f g", reference_amount)
         }
 
     @Ignore
@@ -90,7 +90,7 @@ data class FoodItem (
         this.date = OffsetDateTime.now()
         this.categoryId = -1
         this.type = 0
-        this.referenceAmount = 100.0f
+        this.reference_amount = 100.0f
     }
 
     @Ignore
@@ -98,12 +98,12 @@ data class FoodItem (
         type = p.readInt()
         id = p.readInt()
         nameAddition = p.readString()
-        authorName = p.readString()
+        author = p.readString()
         categoryId = p.readInt()
         categoryName = p.readString()
         date = IsoTimeConverter().stringToOffsetDateTime(p.readString())
         ean = p.readLong()
-        referenceAmount = p.readFloat()
+        reference_amount = p.readFloat()
         calories = p.readFloat()
         manufacturer = p.readString()
         total_fat = p.readFloat()
@@ -125,12 +125,12 @@ data class FoodItem (
         sulphur = p.readFloat()
         chloro = p.readFloat()
         fluoric = p.readFloat()
-        vitaminB1 = p.readFloat()
-        vitaminB12 = p.readFloat()
-        vitaminB6 = p.readFloat()
-        vitaminC = p.readFloat()
-        vitaminD = p.readFloat()
-        vitaminE = p.readFloat()
+        vitamin_b1 = p.readFloat()
+        vitamin_b12 = p.readFloat()
+        vitamin_b6 = p.readFloat()
+        vitamin_c = p.readFloat()
+        vitamin_d = p.readFloat()
+        vitamin_e = p.readFloat()
         relevance = p.readFloat()
         lastLogged = IsoTimeConverter().stringToOffsetDateTime(p.readString())
     }
@@ -151,7 +151,7 @@ data class FoodItem (
                 else manSt.harvested
             }
             1 -> {
-                if (authorName != null && authorName!!.isNotEmpty()) manSt.recipeBy + authorName!!
+                if (author != null && author!!.isNotEmpty()) manSt.recipeBy + author!!
                 else manSt.selfmade
             }
             else -> ""
@@ -166,12 +166,12 @@ data class FoodItem (
         out.writeInt(type)
         out.writeInt(id)
         out.writeString(nameAddition)
-        out.writeString(authorName)
+        out.writeString(author)
         out.writeInt(categoryId)
         out.writeString(categoryName)
         out.writeString(IsoTimeConverter().offsetDateTimeToString(date))
         out.writeLong(ean)
-        out.writeFloat(referenceAmount)
+        out.writeFloat(reference_amount)
         out.writeFloat(calories)
         out.writeString(manufacturer)
         out.writeFloat(total_fat)
@@ -193,12 +193,12 @@ data class FoodItem (
         out.writeFloat(sulphur)
         out.writeFloat(chloro)
         out.writeFloat(fluoric)
-        out.writeFloat(vitaminB1)
-        out.writeFloat(vitaminB12)
-        out.writeFloat(vitaminB6)
-        out.writeFloat(vitaminC)
-        out.writeFloat(vitaminD)
-        out.writeFloat(vitaminE)
+        out.writeFloat(vitamin_b1)
+        out.writeFloat(vitamin_b12)
+        out.writeFloat(vitamin_b6)
+        out.writeFloat(vitamin_c)
+        out.writeFloat(vitamin_d)
+        out.writeFloat(vitamin_e)
         out.writeFloat(relevance)
         out.writeString(IsoTimeConverter().offsetDateTimeToString(lastLogged))
     }
@@ -212,10 +212,22 @@ data class FoodItem (
                 calories = calories,
                 source = describeManufacturer(),
                 ean = ean,
-                referenceAmount = referenceAmount,
+                referenceAmount = reference_amount,
                 relevance = relevance,
                 lastLogged = lastLogged
         )
+    }
+
+    fun setFromJSON(property: KMutableProperty<*>, json: JSONObject, check: (Any) -> Boolean) {
+        if (json.isNull(property.name)) return
+        if (check(json.get(property.name))) property.setter.call(json.get(property.name))
+    }
+
+    fun setFloatFromJSON(property: KMutableProperty<Float>, json: JSONObject) {
+        if (json.isNull(property.name)) return
+        val doubleValue: Double = json.getDouble(property.name)
+        if (doubleValue.isNaN()) return
+        property.setter.call(doubleValue.toFloat())
     }
 
     companion object {
@@ -234,70 +246,94 @@ data class FoodItem (
             var nameAddition = ""
             queryFoodItem.name?.let { nameAddition = it.split(": ")[1] }
             val food = FoodItem(nameAddition)
+            food.type = 0
+            if (queryFoodItem.isRecipe) food.type = 1
             food.id = queryFoodItem.foodId
             if (queryFoodItem.categoryId >= 0) {
                 food.categoryId = queryFoodItem.categoryId
                 if (queryFoodItem.name != null)
                     food.setCategory(food.categoryId, queryFoodItem.name.split(": ")[0])
             }
-            if (queryFoodItem.isRecipe) food.authorName = queryFoodItem.source
+            if (queryFoodItem.isRecipe) food.author = queryFoodItem.source
             else food.manufacturer = queryFoodItem.source
             queryFoodItem.ean?.let { food.ean = it }
             queryFoodItem.calories?.let { food.calories = it }
-            queryFoodItem.referenceAmount?.let { food.referenceAmount = it }
+            queryFoodItem.referenceAmount?.let { food.reference_amount = it }
             food.relevance = queryFoodItem.relevance
             food.lastLogged = queryFoodItem.lastLogged
             return food
         }
 
-        fun fromJSONObject(detailedFood: JSONObject, existingFood: FoodItem? = null): FoodItem {
-            var food = FoodItem(detailedFood["nameAddition"] as String)
-            existingFood?.let { food = it }
-            food.nameAddition = detailedFood["nameAddition"] as String
-            food.type = detailedFood["type"] as Int
-            food.id = detailedFood["id"] as Int
-            if ((detailedFood["authorName"] as String).isNotEmpty()) {
-                food.authorName = detailedFood["authorName"] as String?
+        fun fromJSONObject(detailedFood: JSONObject, existingFood: FoodItem? = null): FoodItem? {
+            Log.i("fromJSONObject", existingFood.toString())
+            if (detailedFood.isNull("name")) {
+                Log.e("Unable to create FoodItem from JSON",
+                        "The property 'name' is missing.")
+                return null
             }
-            food.categoryId = detailedFood["categoryId"] as Int
-            food.categoryName = detailedFood["categoryName"] as String?
-            food.date = IsoTimeConverter().stringToOffsetDateTime(detailedFood["date"] as String)
-            food.ean = detailedFood["ean"] as Long
-            food.referenceAmount = detailedFood["referenceAmount"] as Float
-            food.calories = detailedFood["calories"] as Float
-            food.manufacturer = detailedFood["manufacturer"] as String?
-            food.total_fat = detailedFood["total_fat"] as Float
-            food.saturated_fat = detailedFood["saturated_fat"] as Float
-            food.cholesterol = detailedFood["cholesterol"] as Float
-            food.protein = detailedFood["protein"] as Float
-            food.total_carbs = detailedFood["total_carbs"] as Float
-            food.sugar = detailedFood["sugar"] as Float
-            food.dietary_fiber = detailedFood["dietary_fiber"] as Float
-            food.salt = detailedFood["salt"] as Float
-            food.sodium = detailedFood["sodium"] as Float
-            food.potassium = detailedFood["potassium"] as Float
-            food.copper = detailedFood["copper"] as Float
-            food.iron = detailedFood["iron"] as Float
-            food.magnesium = detailedFood["magnesium"] as Float
-            food.manganese = detailedFood["manganese"] as Float
-            food.zinc = detailedFood["zinc"] as Float
-            food.phosphorous = detailedFood["phosphorous"] as Float
-            food.sulphur = detailedFood["sulphur"] as Float
-            food.chloro = detailedFood["chloro"] as Float
-            food.fluoric = detailedFood["fluoric"] as Float
-            food.vitaminB1 = detailedFood["vitaminB1"] as Float
-            food.vitaminB12 = detailedFood["vitaminB12"] as Float
-            food.vitaminB6 = detailedFood["vitaminB6"] as Float
-            food.vitaminC = detailedFood["vitaminC"] as Float
-            food.vitaminD = detailedFood["vitaminD"] as Float
-            food.vitaminE = detailedFood["vitaminE"] as Float
+            val loadedName = detailedFood.getString("name")
+            if (!loadedName.contains(": ")) {
+                Log.e("Unable to create FoodItem from JSON",
+                        "The property 'name' did not contain ': '.")
+                return null
+            }
+            val nameAddition: String = loadedName.split(": ")[1]
+            var food = FoodItem(nameAddition)
+            existingFood?.let { food = it }
+            food.nameAddition = nameAddition
+            food.nameAddition?.let{Log.i("nameAddition", it)}
+            food.categoryName = loadedName.split(": ")[0]
+            arrayOf(
+                    food::type,
+                    food::id,
+                    food::categoryId,
+                    food::ean
+            ).map { food.setFromJSON(it, detailedFood) { true } }
+            arrayOf(
+                    food::manufacturer,
+                    food::author
+            ).map { food.setFromJSON(it, detailedFood) {
+                name -> (name as String?).isNullOrBlank() } }
+            food.author?.let { if (it.removeSurrounding(" ").isEmpty()) null; else it }
+            arrayOf(
+                    food::reference_amount,
+                    food::calories,
+                    food::total_fat,
+                    food::saturated_fat,
+                    food::cholesterol,
+                    food::protein,
+                    food::total_carbs,
+                    food::sugar,
+                    food::dietary_fiber,
+                    food::salt,
+                    food::sodium,
+                    food::potassium,
+                    food::copper,
+                    food::iron,
+                    food::magnesium,
+                    food::manganese,
+                    food::zinc,
+                    food::phosphorous,
+                    food::sulphur,
+                    food::chloro,
+                    food::vitamin_b1,
+                    food::vitamin_b12,
+                    food::vitamin_b6,
+                    food::vitamin_c,
+                    food::vitamin_d,
+                    food::vitamin_e
+            ).map { food.setFloatFromJSON(it, detailedFood) }
+            if (detailedFood.has("date") &&
+                    !detailedFood.getString("date").isNullOrBlank())
+                food.date = IsoTimeConverter().stringToOffsetDateTime(
+                    detailedFood.getString("date"))
             return food
         }
 
         fun fromQueryJSONArray(jsonFood: JSONArray): FoodItem {
             val food = FoodItem(jsonFood[2] as String)
             val typeIdCategory = jsonFood[0] as String
-            food.type = typeIdCategory[0].toInt()
+            food.type = typeIdCategory.substring(0, 1).toInt()
             food.id = typeIdCategory.substring(1).split(":")[0].toInt()
             food.setCategory(
                     typeIdCategory.substring(1).split(":")[1].toInt(),
@@ -305,9 +341,9 @@ data class FoodItem (
             val manufacturerOrAuthor = jsonFood[3] as String
             if (manufacturerOrAuthor.isNotEmpty()) when (food.type) {
                 0 -> food.manufacturer = manufacturerOrAuthor
-                1 -> food.authorName = manufacturerOrAuthor
+                1 -> food.author = manufacturerOrAuthor
             }
-            food.referenceAmount = (jsonFood[4] as String).toFloat()
+            food.reference_amount = (jsonFood[4] as String).toFloat()
             food.calories = (jsonFood[5] as String).toFloat()
             return food
         }

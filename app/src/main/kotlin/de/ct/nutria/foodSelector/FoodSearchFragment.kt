@@ -34,7 +34,7 @@ import java.util.HashMap
 class FoodSearchFragment : Fragment(), AdapterView.OnItemClickListener, FoodItemRepositoryListener {
     private val parcelableFoodList = "de.ct.nutria.foodSelector.FoodSearchFragment.foodArray"
     private var listSelectListener: OnListSelect? = null
-    private var repository: FoodItemRepository? = null
+    private var repository: QueryFoodItemRepository? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +44,7 @@ class FoodSearchFragment : Fragment(), AdapterView.OnItemClickListener, FoodItem
                 // update UI
             //})
         //}
-        repository = FoodItemRepository(this)
+        repository = QueryFoodItemRepository(this)
         repository?.let{ it.manSt = ManufacturerDescriptionStrings(
                 recipeBy = getString(R.string.recipe_by),
                 selfmade = getString(R.string.selfmade),
@@ -62,17 +62,13 @@ class FoodSearchFragment : Fragment(), AdapterView.OnItemClickListener, FoodItem
         val view = inflater.inflate(R.layout.fragment_fooditem_query, container, false)
         view.findViewById<ListView>(R.id.foodList)?.onItemClickListener = this
         view.findViewById<EditText>(R.id.searchEntry)?.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-
-            }
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 requestList(s)
             }
 
-            override fun afterTextChanged(s: Editable) {
-
-            }
+            override fun afterTextChanged(s: Editable) {}
         })
         return view
     }
@@ -115,15 +111,7 @@ class FoodSearchFragment : Fragment(), AdapterView.OnItemClickListener, FoodItem
     }
 
     private fun requestList(query: CharSequence) {
-        val test = FoodItem("Foo")
-        test.type = 1
-        test.authorName = "Maria Musterfrau"
-        test.setCategory(1, "test")
-        test.calories = 423.0f
-        Log.d(test.name, test.caloriesString)
-        Log.d("Manufacturer", test.describeManufacturer())
-        repository!!.query(query.toString())
-        //createDummyList()
+        repository?.let { it.query(query.toString()) }
         updateList()
     }
 
@@ -133,15 +121,17 @@ class FoodSearchFragment : Fragment(), AdapterView.OnItemClickListener, FoodItem
                 selfmade = getString(R.string.selfmade),
                 harvested = getString(R.string.harvested))
         val displayFoodList = ArrayList<HashMap<String, String>>()
-        if (repository != null) for (item in repository!!.foodArray) {
-            item.manSt = manSt
-            val entry = HashMap<String, String>()
-            entry["foodName"] = item.name
-            entry["manufacturer"] = item.describeManufacturer()
-            entry["calories"] = item.caloriesString
-            entry["reference_amount"] = item.referenceAmountString
-            entry["iconID"] = getIcon(item.categoryId).toString() + ""
-            displayFoodList.add(entry)
+        repository?.let {
+            for (item in it.foodArray) {
+                item.manSt = manSt
+                val entry = HashMap<String, String>()
+                entry["foodName"] = item.name
+                entry["manufacturer"] = item.describeManufacturer()
+                entry["calories"] = item.caloriesString
+                entry["reference_amount"] = item.referenceAmountString
+                entry["iconID"] = "%d".format(getIcon(item.categoryId))
+                displayFoodList.add(entry)
+            }
         }
         val fromArray = arrayOf("foodName", "manufacturer", "calories", "reference_amount", "iconID")
         val viewIndexes = intArrayOf(R.id.listFoodName, R.id.listManufacturer,
@@ -150,42 +140,12 @@ class FoodSearchFragment : Fragment(), AdapterView.OnItemClickListener, FoodItem
                 R.layout.fragment_fooditem, fromArray, viewIndexes)
         foodList.adapter = adapter
         foodList.visibility = if (displayFoodList.size > 0) View.VISIBLE else View.INVISIBLE
-        foodListEmpty.visibility = if (displayFoodList.size <= 0) View.VISIBLE else View.INVISIBLE
+        foodListEmpty.visibility = if (displayFoodList.size <= 0) View.VISIBLE else View.GONE
     }
 
     override fun onFoodItemRepositoryUpdate() {
         updateList()
         // Update Spinner
-    }
-
-    private fun createDummyList() {
-        repository!!.foodArray.clear()
-        val i1 = FoodItem("Banane")
-        i1.type = 0
-        i1.setCategory(1, "Obst")
-        i1.calories = 123f
-        i1.authorName = "Max Mustermann"
-        repository!!.foodArray.add(i1)
-        val i2 = FoodItem("Apfel")
-        i2.type = 0
-        i2.setCategory(6, "Obst")
-        i2.calories = 82f
-        i2.authorName = "Max Mustermann"
-        repository!!.foodArray.add(i2)
-        val i3 = FoodItem("Ritter Sport - Honig-Salz-Mandel")
-        i3.type = 0
-        i3.manufacturer = "Ritter Sport"
-        i3.setCategory(2, "Schokolade")
-        i3.calories = 564f
-        i3.authorName = "Andreas Adipositas"
-        repository!!.foodArray.add(i3)
-        val i4 = FoodItem("Salz")
-        i4.type = 0
-        i4.manufacturer = "Bad Reichenhaller"
-        i4.setCategory(3, "Gewürz")
-        i4.calories = 1f
-        i4.authorName = "Andreas Adipositas"
-        repository!!.foodArray.add(i4)
     }
 
     companion object {

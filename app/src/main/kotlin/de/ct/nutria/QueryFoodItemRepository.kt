@@ -1,6 +1,5 @@
 package de.ct.nutria
 
-import android.util.Log
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.json.JSONArray
@@ -12,7 +11,7 @@ interface FoodItemRepositoryListener {
     fun onFoodItemRepositoryUpdate()
 }
 
-class FoodItemRepository(var listener: FoodItemRepositoryListener) {
+class QueryFoodItemRepository(var listener: FoodItemRepositoryListener) {
     var foodArray: ArrayList<FoodItem> = ArrayList()
     var requestOngoing = false
     var manSt = ManufacturerDescriptionStrings()
@@ -35,30 +34,26 @@ class FoodItemRepository(var listener: FoodItemRepositoryListener) {
     }
 
     fun queryServer(query: String) {
-        Log.i(this.toString(), "Querying Nutria DB: $query")
         requestOngoing = true;
         doAsync {
             val result = JSONObject(URL(
                     "https://nutria.db.pinae.net/json/find?name=$query").readText())
+            if (result.isNull("food")) return@doAsync
             val foundFoods: JSONArray = result["food"] as JSONArray
-            for (i in 0 until foundFoods.length()) {
-                val newFood = FoodItem.fromQueryJSONArray(foundFoods[i] as JSONArray)
-                newFood.manSt = manSt
-                foodArray.add(i, newFood)
-                addToRoomDB(newFood.toQueryFoodItem())
-                Log.i("  food", foundFoods[i].toString())
-            }
             uiThread {
-                requestOngoing = false;
-                Log.i("Request", result.toString())
-
+                for (i in 0 until foundFoods.length()) {
+                    val newFood = FoodItem.fromQueryJSONArray(foundFoods[i] as JSONArray)
+                    newFood.manSt = manSt
+                    foodArray.add(i, newFood)
+                    addToRoomDB(newFood.toQueryFoodItem())
+                }
+                requestOngoing = false
                 listener.onFoodItemRepositoryUpdate()
             }
         }
     }
 
     fun queryRoomDB(query: String) {
-        Log.d("querying RoomDB", query)
         val queryFoodItemDao : QueryFoodItemDao = cacheDb.queryFoodItemDao()
         doAsync {
             for ((foundItemCounter, roomFoodItem) in queryFoodItemDao.queryFood(query).withIndex()) {
@@ -67,7 +62,6 @@ class FoodItemRepository(var listener: FoodItemRepositoryListener) {
                 foodArray.add(foundItemCounter, item)
             }
             uiThread {
-                Log.d("foodArray", foodArray.toString())
                 listener.onFoodItemRepositoryUpdate()
             }
         }

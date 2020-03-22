@@ -1,5 +1,6 @@
 package de.ct.nutria
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +22,9 @@ class SearchFoodActivity : AppCompatActivity(), FoodSearchFragment.OnListSelect 
     }
 
     override fun onListSelect(item: FoodItem) {
-        Log.d("Food item in activity", item.name)
+        Log.i("Food item in activity", item.toString())
+        val intent = Intent(this, FoodDetailsActivity::class.java)
+        intent.putExtra("foodItem", item)
+        startActivity(intent)
     }
 }
