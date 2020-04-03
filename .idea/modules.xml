@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Code-Nutria.iml" filepath="$PROJECT_DIR$/Code-Nutria.iml" group="Nutria" />
       <module fileurl="file://$PROJECT_DIR$/Nutria.iml" filepath="$PROJECT_DIR$/Nutria.iml" group="Nutria" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Nutria/app" />
     </modules>
