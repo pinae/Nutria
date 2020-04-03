@@ -17,7 +17,7 @@
         <activity
             android:name=".FoodDetailsActivity"
             android:label="@string/title_activity_food_details"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SearchFoodActivity"
             android:label="@string/title_activity_search_food"
@@ -32,6 +32,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <uses-library android:name="android.test.runner" android:required="false" />
+        <uses-library android:name="android.test.base" android:required="false" />
+        <uses-library android:name="android.test.mock" android:required="false" />
     </application>
 
 </manifest>

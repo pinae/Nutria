@@ -1,5 +1,6 @@
 package de.ct.nutria
 
+import android.util.Log
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.json.JSONArray
@@ -28,7 +29,7 @@ class QueryFoodItemRepository(var listener: FoodItemRepositoryListener) {
     }
 
     fun query(query: String) {
-        queryServer(query)
+        //queryServer(query)
         cleanFoodArray(query)
         queryRoomDB(query)
     }
@@ -55,7 +56,9 @@ class QueryFoodItemRepository(var listener: FoodItemRepositoryListener) {
 
     fun queryRoomDB(query: String) {
         val queryFoodItemDao : QueryFoodItemDao = cacheDb.queryFoodItemDao()
+        Log.i("queryFoodItemDao", queryFoodItemDao.toString())
         doAsync {
+            Log.i("Room query", queryFoodItemDao.queryFood(query).toString())
             for ((foundItemCounter, roomFoodItem) in queryFoodItemDao.queryFood(query).withIndex()) {
                 val item = FoodItem.fromQueryFoodItem(roomFoodItem)
                 item.manSt = manSt

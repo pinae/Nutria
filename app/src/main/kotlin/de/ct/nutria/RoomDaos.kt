@@ -27,8 +27,17 @@ interface QueryFoodItemDao {
 
 @Dao
 interface LoggedFoodDao {
-    @Query("SELECT * FROM loggedFood WHERE foodId=:id LIMIT 1")
-    fun getFood(id: Int): FoodItem
+    @Query("SELECT * FROM loggedFood WHERE (type=:type AND foodId=:foodId) ORDER BY lastLogged DESC LIMIT 1")
+    fun getFood(type: Int, foodId: Int): FoodItem
+
+    @Query("SELECT * FROM loggedFood WHERE (type=:type AND foodId=:foodId)")
+    fun getFoods(type: Int, foodId: Int): List<FoodItem>
+
+    @Query ("SELECT * FROM loggedFood")
+    fun getAllFoods(): List<FoodItem>
+
+    @Query("SELECT COUNT(roomId) FROM loggedFood WHERE (type=:type AND foodId=:foodId)")
+    fun getFoodCount(type: Int, foodId: Int): Int
 
     @Insert
     fun insertAll(vararg foods: FoodItem)

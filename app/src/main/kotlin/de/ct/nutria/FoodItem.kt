@@ -22,8 +22,9 @@ data class ManufacturerDescriptionStrings(
 @TypeConverters(IsoTimeConverter::class)
 @Entity(tableName = "loggedFood")
 data class FoodItem (
-    @PrimaryKey
-    @ColumnInfo(name = "foodId") var id: Int = -1,
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "roomId") var roomId: Int? = null,
+    @ColumnInfo(name = "foodId") var foodId: Int = -1,
     @ColumnInfo(name = "type") var type: Int = 0,
     @ColumnInfo(name = "nameAddition") var nameAddition: String? = null,
     @ColumnInfo(name = "author") var author: String? = null,
@@ -95,8 +96,9 @@ data class FoodItem (
 
     @Ignore
     private constructor(p: Parcel) : this() {
+        roomId = p.readInt()
         type = p.readInt()
-        id = p.readInt()
+        foodId = p.readInt()
         nameAddition = p.readString()
         author = p.readString()
         categoryId = p.readInt()
@@ -163,8 +165,10 @@ data class FoodItem (
     }
 
     override fun writeToParcel(out: Parcel, flags: Int) {
+        if (roomId != null) out.writeInt(roomId!!)
+        else out.writeValue(roomId)
         out.writeInt(type)
-        out.writeInt(id)
+        out.writeInt(foodId)
         out.writeString(nameAddition)
         out.writeString(author)
         out.writeInt(categoryId)
@@ -205,7 +209,7 @@ data class FoodItem (
 
     fun toQueryFoodItem(): QueryFoodItem {
         return QueryFoodItem(
-                foodId = id,
+                foodId = foodId,
                 isRecipe = type == 1,
                 categoryId = categoryId,
                 name = name,
@@ -248,7 +252,7 @@ data class FoodItem (
             val food = FoodItem(nameAddition)
             food.type = 0
             if (queryFoodItem.isRecipe) food.type = 1
-            food.id = queryFoodItem.foodId
+            food.foodId = queryFoodItem.foodId
             if (queryFoodItem.categoryId >= 0) {
                 food.categoryId = queryFoodItem.categoryId
                 if (queryFoodItem.name != null)
@@ -285,7 +289,7 @@ data class FoodItem (
             food.categoryName = loadedName.split(": ")[0]
             arrayOf(
                     food::type,
-                    food::id,
+                    food::foodId,
                     food::categoryId,
                     food::ean
             ).map { food.setFromJSON(it, detailedFood) { true } }
@@ -334,7 +338,7 @@ data class FoodItem (
             val food = FoodItem(jsonFood[2] as String)
             val typeIdCategory = jsonFood[0] as String
             food.type = typeIdCategory.substring(0, 1).toInt()
-            food.id = typeIdCategory.substring(1).split(":")[0].toInt()
+            food.foodId = typeIdCategory.substring(1).split(":")[0].toInt()
             food.setCategory(
                     typeIdCategory.substring(1).split(":")[1].toInt(),
                     jsonFood[1] as String)

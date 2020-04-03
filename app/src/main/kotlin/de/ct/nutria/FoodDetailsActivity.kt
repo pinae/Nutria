@@ -21,7 +21,7 @@ class FoodDetailsActivity : AppCompatActivity(), LoggedFoodRepositoryListener {
         if (intent.hasExtra("foodItem"))
             intent.getParcelableExtra<FoodItem>("foodItem")?.let {
                 repository.clear()
-                repository.updateFood(it)
+                repository.replaceOrAppend(it)
                 repository.updateDetailsForAllFoods()
                 Log.i("food in repo", repository.foodArray.toString())
             }
