@@ -1,11 +1,13 @@
 package de.ct.nutria
 
+import android.database.sqlite.SQLiteConstraintException
 import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Before
 import org.junit.Test
 import java.time.OffsetDateTime
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class TestRoomDaos {
     lateinit var cachedFoodDatabase: CachedFoodDatabase
@@ -64,6 +66,22 @@ class TestRoomDaos {
         assertEquals(
                 queryFoodItemDao.getFood("Backzutat: foo") as QueryFoodItem?,
                 exampleFood)
+    }
+
+    @Test
+    fun double_insert() {
+        val queryFoodItemDao = cachedFoodDatabase.queryFoodItemDao()
+        val exampleFood = get_example_food_foo()
+        queryFoodItemDao.insertAll(exampleFood)
+        val ex = assertFailsWith<SQLiteConstraintException>(
+                "This throws an error that the UNIQUE constraint failed."
+        ) {
+            queryFoodItemDao.insertAll(exampleFood)
+        }
+        assertEquals("UNIQUE constraint failed: food.foodId " +
+                "(code 1555 SQLITE_CONSTRAINT_PRIMARYKEY[1555])", ex.message)
+        assertEquals(exampleFood,
+                queryFoodItemDao.getFood("Backzutat: foo") as QueryFoodItem?)
     }
 
     @Test

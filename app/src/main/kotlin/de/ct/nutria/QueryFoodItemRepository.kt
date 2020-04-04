@@ -1,5 +1,6 @@
 package de.ct.nutria
 
+import android.database.sqlite.SQLiteConstraintException
 import android.util.Log
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -16,6 +17,7 @@ class QueryFoodItemRepository(var listener: FoodItemRepositoryListener) {
     var foodArray: ArrayList<FoodItem> = ArrayList()
     var requestOngoing = false
     var manSt = ManufacturerDescriptionStrings()
+    var lastQuery = ""
 
     private fun cleanFoodArray(query: String) {
         var i = 0
@@ -28,9 +30,20 @@ class QueryFoodItemRepository(var listener: FoodItemRepositoryListener) {
         }
     }
 
+    private fun insertIntoFoodArray(food: FoodItem) {
+        for ((i, it) in foodArray.withIndex()) {
+            if (it.foodId == food.foodId) {
+                foodArray.removeAt(i)
+                break
+            }
+        }
+        foodArray.add(food)
+        foodArray.sortedByDescending { it.relevance }
+    }
+
     fun query(query: String) {
-        //queryServer(query)
-        cleanFoodArray(query)
+        lastQuery = query
+        queryServer(query)
         queryRoomDB(query)
     }
 
@@ -41,13 +54,14 @@ class QueryFoodItemRepository(var listener: FoodItemRepositoryListener) {
                     "https://nutria.db.pinae.net/json/find?name=$query").readText())
             if (result.isNull("food")) return@doAsync
             val foundFoods: JSONArray = result["food"] as JSONArray
+            insertQueryIntoRoomDB(foundFoods)
             uiThread {
                 for (i in 0 until foundFoods.length()) {
                     val newFood = FoodItem.fromQueryJSONArray(foundFoods[i] as JSONArray)
                     newFood.manSt = manSt
-                    foodArray.add(i, newFood)
-                    addToRoomDB(newFood.toQueryFoodItem())
+                    insertIntoFoodArray(newFood)
                 }
+                cleanFoodArray(lastQuery)
                 requestOngoing = false
                 listener.onFoodItemRepositoryUpdate()
             }
@@ -55,25 +69,64 @@ class QueryFoodItemRepository(var listener: FoodItemRepositoryListener) {
     }
 
     fun queryRoomDB(query: String) {
-        val queryFoodItemDao : QueryFoodItemDao = cacheDb.queryFoodItemDao()
-        Log.i("queryFoodItemDao", queryFoodItemDao.toString())
         doAsync {
+            val queryFoodItemDao : QueryFoodItemDao = cacheDb.queryFoodItemDao()
             Log.i("Room query", queryFoodItemDao.queryFood(query).toString())
-            for ((foundItemCounter, roomFoodItem) in queryFoodItemDao.queryFood(query).withIndex()) {
-                val item = FoodItem.fromQueryFoodItem(roomFoodItem)
-                item.manSt = manSt
-                foodArray.add(foundItemCounter, item)
+            val loadedFoodList = ArrayList<FoodItem>()
+            queryFoodItemDao.queryFood(query).forEach {
+                loadedFoodList.add(FoodItem.fromQueryFoodItem(it))
             }
             uiThread {
+                loadedFoodList.forEach {
+                    it.manSt = manSt
+                    insertIntoFoodArray(it)
+                }
+                cleanFoodArray(lastQuery)
+                Log.i("foodArray", foodArray.toString())
                 listener.onFoodItemRepositoryUpdate()
             }
         }
     }
 
-    fun addToRoomDB(vararg foods: QueryFoodItem) {
+    private fun insertQueryIntoRoomDB(foundFoods: JSONArray) {
         val queryFoodItemDao : QueryFoodItemDao = cacheDb.queryFoodItemDao()
+        for (i in 0 until foundFoods.length()) {
+            val jsonFood: JSONArray = foundFoods[i] as JSONArray
+            val typeIdCategory = jsonFood[0] as String
+            val foodName = (jsonFood[1] as String) + ": " + (jsonFood[2] as String)
+            val savedFood = queryFoodItemDao.getFood(foodName)
+            var eanLong: Long? = (jsonFood[6] as String).toLong()
+            if (eanLong != null && eanLong == (-1).toLong()) eanLong = null
+            val newFood = QueryFoodItem(
+                    foodId = typeIdCategory.substring(1).split(":")[0].toInt(),
+                    isRecipe = typeIdCategory.substring(0, 1).toInt() > 0,
+                    categoryId = typeIdCategory.substring(1).split(":")[1].toInt(),
+                    name = foodName,
+                    calories = (jsonFood[5] as String).toFloat(),
+                    source = (jsonFood[3] as String),
+                    ean = eanLong,
+                    referenceAmount = (jsonFood[4] as String).toFloat(),
+                    relevance = savedFood?.relevance ?: 1.0f,
+                    lastLogged = savedFood?.lastLogged
+            )
+            try {
+                queryFoodItemDao.insertAll(newFood)
+            } catch (e: SQLiteConstraintException) {
+                queryFoodItemDao.updateAll(newFood)
+            }
+        }
+    }
+
+    private fun addToRoomDB(vararg foods: QueryFoodItem) {
         doAsync {
-            queryFoodItemDao.insertAll(*foods)
+            val queryFoodItemDao : QueryFoodItemDao = cacheDb.queryFoodItemDao()
+            foods.forEach {
+                try {
+                    queryFoodItemDao.insertAll(it)
+                } catch (e: SQLiteConstraintException) {
+                    queryFoodItemDao.updateAll(it)
+                }
+            }
         }
     }
 }

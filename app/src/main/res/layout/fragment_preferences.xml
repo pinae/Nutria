@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".PreferencesFragment">
+
+    <Button
+        android:id="@+id/deleteDatabaseButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:layout_margin="@dimen/food_detail_property_spacing"
+        android:text="@string/delete_local_database_including_logged_food"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/design_default_color_on_primary"
+        app:cornerRadius="8sp" />
+
+</LinearLayout>

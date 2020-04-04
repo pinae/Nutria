@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter
 @Dao
 interface QueryFoodItemDao {
     @Query("SELECT * FROM food WHERE name=:name LIMIT 1")
-    fun getFood(name: String): QueryFoodItem
+    fun getFood(name: String): QueryFoodItem?
 
     @Query("SELECT * FROM food WHERE name LIKE '%' || :queryString || '%'")
     fun queryFood(queryString: String): List<QueryFoodItem>

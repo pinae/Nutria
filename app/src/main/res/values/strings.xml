@@ -66,5 +66,7 @@
     <string name="unit_kcal">kcal</string>
     <string name="unit_g">g</string>
     <string name="unit_mg">mg</string>
+    <string name="delete_local_database_including_logged_food">Delete local database (including logged food)</string>
+    <string name="database_deletion_finished">Your local database was deleted.</string>
 
 </resources>
