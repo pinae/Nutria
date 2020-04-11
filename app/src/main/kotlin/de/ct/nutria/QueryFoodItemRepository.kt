@@ -22,7 +22,7 @@ class QueryFoodItemRepository(var listener: FoodItemRepositoryListener) {
     private fun cleanFoodArray(query: String) {
         var i = 0
         while (i < foodArray.size) {
-            if (!foodArray[i].name.contains(query)) {
+            if (!foodArray[i].name.toLowerCase().contains(query.toLowerCase().trim())) {
                 foodArray.removeAt(i)
                 i--
             }
@@ -73,7 +73,7 @@ class QueryFoodItemRepository(var listener: FoodItemRepositoryListener) {
             val queryFoodItemDao : QueryFoodItemDao = cacheDb.queryFoodItemDao()
             Log.i("Room query", queryFoodItemDao.queryFood(query).toString())
             val loadedFoodList = ArrayList<FoodItem>()
-            queryFoodItemDao.queryFood(query).forEach {
+            queryFoodItemDao.queryFood(query.toLowerCase().trim()).forEach {
                 loadedFoodList.add(FoodItem.fromQueryFoodItem(it))
             }
             uiThread {

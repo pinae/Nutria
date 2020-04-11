@@ -9,7 +9,7 @@ interface QueryFoodItemDao {
     @Query("SELECT * FROM food WHERE name=:name LIMIT 1")
     fun getFood(name: String): QueryFoodItem?
 
-    @Query("SELECT * FROM food WHERE name LIKE '%' || :queryString || '%'")
+    @Query("SELECT * FROM food WHERE lower(name) LIKE '%' || :queryString || '%'")
     fun queryFood(queryString: String): List<QueryFoodItem>
 
     @Query("SELECT * FROM food WHERE categoryId=:categoryId")
@@ -28,7 +28,7 @@ interface QueryFoodItemDao {
 @Dao
 interface LoggedFoodDao {
     @Query("SELECT * FROM loggedFood WHERE (type=:type AND foodId=:foodId) ORDER BY lastLogged DESC LIMIT 1")
-    fun getFood(type: Int, foodId: Int): FoodItem
+    fun getFood(type: Int, foodId: Int): FoodItem?
 
     @Query("SELECT * FROM loggedFood WHERE (type=:type AND foodId=:foodId)")
     fun getFoods(type: Int, foodId: Int): List<FoodItem>

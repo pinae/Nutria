@@ -8,6 +8,8 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 
 import kotlinx.android.synthetic.main.activity_food_details.*
+import kotlinx.android.synthetic.main.activity_food_details.toolbar
+import kotlinx.android.synthetic.main.activity_search_food.*
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
@@ -18,6 +20,11 @@ class FoodDetailsActivity : AppCompatActivity(), LoggedFoodRepositoryListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_food_details)
         setSupportActionBar(toolbar)
+        supportActionBar?.let{
+            it.setDisplayHomeAsUpEnabled(true)
+            it.setDisplayShowHomeEnabled(true)
+        }
+        toolbar.setNavigationOnClickListener { finish() }
         if (intent.hasExtra("foodItem"))
             intent.getParcelableExtra<FoodItem>("foodItem")?.let {
                 repository.clear()

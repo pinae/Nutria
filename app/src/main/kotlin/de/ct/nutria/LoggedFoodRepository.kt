@@ -23,9 +23,11 @@ class LoggedFoodRepository(var listener: LoggedFoodRepositoryListener) {
         var updated = false
         foodArray.forEachIndexed {
             i, af -> if (af.type == food.type && af.foodId == food.foodId) {
-            foodArray[i] = food
-            updated = true
-        } }
+                foodArray[i].lastLogged?.let { food.lastLogged = it }
+                foodArray[i] = food
+                updated = true
+            }
+        }
         if (!updated) foodArray.add(food)
         listener.onFoodUpdate()
     }
@@ -46,17 +48,17 @@ class LoggedFoodRepository(var listener: LoggedFoodRepositoryListener) {
                 Log.i("Food details from server", food.toString())
                 food?.let {
                     replaceOrAppend(it)
-                    saveToRoom(it)
                 }
             }
         }
     }
 
     private fun loadDetailedFoodFromRoom(type: Int, foodId: Int) {
-        val loggedFoodDao = cacheDb.loggedFoodDao()
         doAsync {
+            val loggedFoodDao = cacheDb.loggedFoodDao()
             Log.i("ROOM query", type.toString() + foodId.toString())
             Log.i("ROOM allFoods",loggedFoodDao.getAllFoods().toString())
+            Log.i("ROOM getFood", loggedFoodDao.getFood(type, foodId).toString())
             val result = loggedFoodDao.getFoods(type, foodId)
             Log.i("ROOM result", result.toString())
             Log.i("  count", loggedFoodDao.getFoodCount(type, foodId).toString())
@@ -71,8 +73,8 @@ class LoggedFoodRepository(var listener: LoggedFoodRepositoryListener) {
     }
 
     private fun saveToRoom(food: FoodItem) {
-        val loggedFoodDao = cacheDb.loggedFoodDao()
         doAsync {
+            val loggedFoodDao = cacheDb.loggedFoodDao()
             loggedFoodDao.insertAll(food)
         }
     }
