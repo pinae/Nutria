@@ -5,6 +5,7 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.json.JSONObject
 import java.net.URL
+import java.time.OffsetDateTime
 import java.util.ArrayList
 
 interface LoggedFoodRepositoryListener {
@@ -72,10 +73,47 @@ class LoggedFoodRepository(var listener: LoggedFoodRepositoryListener) {
         }
     }
 
-    private fun saveToRoom(food: FoodItem) {
+    fun loadLoggedFoodForDay(someTime: OffsetDateTime) {
         doAsync {
             val loggedFoodDao = cacheDb.loggedFoodDao()
+            val timeConverter = IsoTimeConverter()
+            Log.i("loading from room", timeConverter.offsetDateTimeToString(
+                    OffsetDateTime.of(someTime.year, someTime.monthValue,
+                            someTime.dayOfMonth,
+                            0, 0, 0, 0, someTime.offset)) + " – " +
+                    timeConverter.offsetDateTimeToString(
+                            OffsetDateTime.of(someTime.year, someTime.monthValue,
+                                    someTime.dayOfMonth + 1,
+                                    0, 0, 0, 0, someTime.offset)))
+            Log.i("all logged Food", loggedFoodDao.getAllFoods().toString())
+            val foodOfTheDay = loggedFoodDao.loadTimeRange(
+                    timeConverter.offsetDateTimeToString(
+                            OffsetDateTime.of(someTime.year, someTime.monthValue,
+                            someTime.dayOfMonth,
+                            0, 0, 0, 0, someTime.offset)),
+                    timeConverter.offsetDateTimeToString(
+                            OffsetDateTime.of(someTime.year, someTime.monthValue,
+                            someTime.dayOfMonth + 1,
+                            0, 0, 0, 0, someTime.offset))
+            )
+            Log.i("foodOfTheDay", foodOfTheDay.toString())
+            uiThread {
+                it.foodArray.clear()
+                foodOfTheDay.forEach {
+                    item -> it.foodArray.add(item)
+                    Log.i("loadLoggedFoodForDay", item.toString())
+                }
+                listener.onFoodUpdate()
+            }
+        }
+    }
+
+    fun saveToRoom(food: FoodItem) {
+        doAsync {
+            val loggedFoodDao = cacheDb.loggedFoodDao()
+            Log.i("saveToRoom", food.toString())
             loggedFoodDao.insertAll(food)
+            Log.i("saveToRoom - finished", food.toString())
         }
     }
 

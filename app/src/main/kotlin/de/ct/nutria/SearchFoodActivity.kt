@@ -22,7 +22,6 @@ class SearchFoodActivity : AppCompatActivity(), FoodSearchFragment.OnListSelect 
     }
 
     override fun onListSelect(item: FoodItem) {
-        Log.i("Food item in activity", item.toString())
         val intent = Intent(this, FoodDetailsActivity::class.java)
         intent.putExtra("foodItem", item)
         startActivity(intent)

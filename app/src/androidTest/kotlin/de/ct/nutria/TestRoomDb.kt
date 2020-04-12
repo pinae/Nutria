@@ -6,8 +6,10 @@ import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Before
 import org.junit.Test
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNotNull
 
 class TestRoomDaos {
     lateinit var cachedFoodDatabase: CachedFoodDatabase
@@ -134,5 +136,107 @@ class TestRoomDaos {
         assertEquals(
                 queryFoodItemDao.queryFood(""),
                 listOf(updatedFood))
+    }
+
+    @Test
+    fun insertLoggedFood() {
+        val logTime = OffsetDateTime.now()
+        val food = FoodItem(
+                type = 0,
+                foodId = 5,
+                categoryId = 5,
+                categoryName = "Ei",
+                nameAddition = "Hühnerei",
+                amount = 57.0f,
+                calories = 78.09f,
+                reference_amount = 100.0f,
+                lastLogged = logTime
+        )
+        assertEquals(Float.NaN, food.total_fat)
+        val loggedFoodDao = cachedFoodDatabase.loggedFoodDao()
+        assertEquals(null, loggedFoodDao.getFood(0, 5))
+        loggedFoodDao.insertAll(food)
+        val loadedFood = loggedFoodDao.getFood(0, 5)
+        assertNotNull(loadedFood)
+        for (property in arrayOf(
+                FoodItem::type,
+                FoodItem::foodId,
+                FoodItem::categoryId,
+                FoodItem::categoryName,
+                FoodItem::nameAddition,
+                FoodItem::amount,
+                FoodItem::calories,
+                FoodItem::reference_amount,
+                FoodItem::lastLogged
+        )) {
+            assertEquals(property.get(food), property.get(loadedFood))
+        }
+    }
+
+    @Test
+    fun loadLogsForDay() {
+        val food1 = FoodItem(
+                type = 0,
+                foodId = 5,
+                categoryId = 5,
+                categoryName = "Ei",
+                nameAddition = "Hühnerei",
+                amount = 57.0f,
+                calories = 78.09f,
+                reference_amount = 100.0f,
+                lastLogged = OffsetDateTime.of(2020, 4, 12,
+                        12, 3, 23, 123, ZoneOffset.UTC)
+        )
+        val food2 = FoodItem(
+                type = 0,
+                foodId = 1,
+                categoryId = 1,
+                categoryName = "Mehl",
+                nameAddition = "Weizenmehl Type 550",
+                amount = 100.0f,
+                calories = 352.0f,
+                reference_amount = 100.0f,
+                lastLogged = OffsetDateTime.of(2020, 4, 12,
+                        23, 59, 59, 123, ZoneOffset.UTC)
+        )
+        val food3 = FoodItem(
+                type = 0,
+                foodId = 19,
+                categoryId = 12,
+                categoryName = "Süßigkeit",
+                nameAddition = "Sahnekaramellen",
+                amount = 100.0f,
+                calories = 357.0f,
+                reference_amount = 100.0f,
+                lastLogged = OffsetDateTime.of(2020, 4, 11,
+                        23, 59, 59, 123, ZoneOffset.UTC)
+        )
+        val loggedFoodDao = cachedFoodDatabase.loggedFoodDao()
+        loggedFoodDao.insertAll(food1, food2, food3)
+        val tc = IsoTimeConverter()
+        val foodOfToday = loggedFoodDao.loadTimeRange(
+                tc.offsetDateTimeToString(
+                        OffsetDateTime.of(2020, 4, 12,
+                        0, 0, 0, 0, ZoneOffset.UTC)),
+                tc.offsetDateTimeToString(
+                        OffsetDateTime.of(2020, 4, 13,
+                        0, 0, 0, 0, ZoneOffset.UTC))
+        )
+        listOf(food1, food2).forEachIndexed { index, expected ->
+            val actual = foodOfToday[index]
+            arrayOf(
+                    FoodItem::type,
+                    FoodItem::foodId,
+                    FoodItem::categoryId,
+                    FoodItem::categoryName,
+                    FoodItem::nameAddition,
+                    FoodItem::amount,
+                    FoodItem::calories,
+                    FoodItem::reference_amount,
+                    FoodItem::lastLogged
+            ).forEach {property ->
+                assertEquals(property.get(expected), property.get(actual))
+            }
+        }
     }
 }

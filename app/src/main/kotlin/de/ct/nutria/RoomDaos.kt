@@ -27,11 +27,14 @@ interface QueryFoodItemDao {
 
 @Dao
 interface LoggedFoodDao {
-    @Query("SELECT * FROM loggedFood WHERE (type=:type AND foodId=:foodId) ORDER BY lastLogged DESC LIMIT 1")
+    @Query("SELECT * FROM loggedFood WHERE (type=:type AND foodId=:foodId) ORDER BY lastLogged ASC LIMIT 1")
     fun getFood(type: Int, foodId: Int): FoodItem?
 
     @Query("SELECT * FROM loggedFood WHERE (type=:type AND foodId=:foodId)")
     fun getFoods(type: Int, foodId: Int): List<FoodItem>
+
+    @Query("SELECT * FROM loggedFood WHERE (lastLogged BETWEEN :startTime AND :endTime) ORDER BY lastLogged ASC")
+    fun loadTimeRange(startTime: String?, endTime: String?): List<FoodItem>
 
     @Query ("SELECT * FROM loggedFood")
     fun getAllFoods(): List<FoodItem>

@@ -1,15 +1,15 @@
 package de.ct.nutria
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.TextView
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 
 import kotlinx.android.synthetic.main.activity_food_details.*
 import kotlinx.android.synthetic.main.activity_food_details.toolbar
-import kotlinx.android.synthetic.main.activity_search_food.*
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
@@ -30,29 +30,39 @@ class FoodDetailsActivity : AppCompatActivity(), LoggedFoodRepositoryListener {
                 repository.clear()
                 repository.replaceOrAppend(it)
                 repository.updateDetailsForAllFoods()
-                Log.i("food in repo", repository.foodArray.toString())
             }
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+        textInputAmount.addTextChangedListener {
+            fab.visibility = if (it.isNullOrBlank()) View.GONE else View.VISIBLE
+        }
+        fab.setOnClickListener {
+            view -> if (repository.foodArray.isNotEmpty()) {
+                Log.i("save button", textInputAmount.text.toString().toFloat().toString())
+                val selectedFood = repository.foodArray[0].copyToScaled(
+                        textInputAmount.text.toString().toFloat())
+                if (selectedFood.lastLogged == null) selectedFood.lastLogged = OffsetDateTime.now()
+                repository.saveToRoom(selectedFood)
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra("foodItem", selectedFood)
+                startActivity(intent)
+            }
         }
     }
 
     fun amountButtonClicked(button: View) {
         when (button) {
-            button5g -> textViewAmount.setText("5")
-            button10g -> textViewAmount.setText("10")
-            button25g -> textViewAmount.setText("25")
-            button50g -> textViewAmount.setText("50")
-            button75g -> textViewAmount.setText("75")
-            button100g -> textViewAmount.setText("100")
-            button200g -> textViewAmount.setText("200")
-            button500g -> textViewAmount.setText("500")
+            button5g -> textInputAmount.setText("5")
+            button10g -> textInputAmount.setText("10")
+            button25g -> textInputAmount.setText("25")
+            button50g -> textInputAmount.setText("50")
+            button75g -> textInputAmount.setText("75")
+            button100g -> textInputAmount.setText("100")
+            button200g -> textInputAmount.setText("200")
+            button500g -> textInputAmount.setText("500")
         }
     }
 
-    private fun updateTextView(value: Float, textView: TextView, container: View, unit: String = "") {
-        if (!value.isNaN()) {
+    private fun updateTextView(value: Float?, textView: TextView, container: View, unit: String = "") {
+        if (value?.isNaN() == false) {
             textView.text = getString(R.string.nutrition_display_float).format(value, unit)
             container.visibility = View.VISIBLE
         } else {

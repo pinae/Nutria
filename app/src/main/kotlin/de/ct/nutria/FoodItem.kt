@@ -32,34 +32,35 @@ data class FoodItem (
     @ColumnInfo(name = "categoryName") var categoryName: String? = null,
     @ColumnInfo(name = "date") var date: OffsetDateTime? = null,
     @ColumnInfo(name = "ean") var ean: Long = -1,
-    @ColumnInfo(name = "reference_amount") var reference_amount: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "calories") var calories: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "amount") var amount: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "reference_amount") var reference_amount: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "calories") var calories: Float? = java.lang.Float.NaN,
     @ColumnInfo(name = "manufacturer") var manufacturer: String? = null,
-    @ColumnInfo(name = "total_fat") var total_fat: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "saturated_fat") var saturated_fat: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "cholesterol") var cholesterol: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "protein") var protein: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "total_carbs") var total_carbs: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "sugar") var sugar: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "dietary_fiber") var dietary_fiber: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "salt") var salt: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "sodium") var sodium: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "potassium") var potassium: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "copper") var copper: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "iron") var iron: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "magnesium") var magnesium: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "manganese") var manganese: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "zinc") var zinc: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "phosphorous") var phosphorous: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "sulphur") var sulphur: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "chloro") var chloro: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "fluoric") var fluoric: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "vitamin_b1") var vitamin_b1: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "vitamin_b12") var vitamin_b12: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "vitamin_b6") var vitamin_b6: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "vitamin_c") var vitamin_c: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "vitamin_d") var vitamin_d: Float = java.lang.Float.NaN,
-    @ColumnInfo(name = "vitamin_e") var vitamin_e: Float = java.lang.Float.NaN,
+    @ColumnInfo(name = "total_fat") var total_fat: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "saturated_fat") var saturated_fat: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "cholesterol") var cholesterol: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "protein") var protein: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "total_carbs") var total_carbs: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "sugar") var sugar: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "dietary_fiber") var dietary_fiber: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "salt") var salt: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "sodium") var sodium: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "potassium") var potassium: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "copper") var copper: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "iron") var iron: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "magnesium") var magnesium: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "manganese") var manganese: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "zinc") var zinc: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "phosphorous") var phosphorous: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "sulphur") var sulphur: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "chloro") var chloro: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "fluoric") var fluoric: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "vitamin_b1") var vitamin_b1: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "vitamin_b12") var vitamin_b12: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "vitamin_b6") var vitamin_b6: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "vitamin_c") var vitamin_c: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "vitamin_d") var vitamin_d: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "vitamin_e") var vitamin_e: Float? = java.lang.Float.NaN,
     @ColumnInfo(name = "relevance") var relevance: Float = 1f,
     @ColumnInfo(name = "lastLogged") var lastLogged: OffsetDateTime? = null,
     @Ignore var manSt: ManufacturerDescriptionStrings = ManufacturerDescriptionStrings()
@@ -72,14 +73,14 @@ data class FoodItem (
         }
 
     val caloriesString: String
-        get() = if (java.lang.Float.isNaN(calories)) {
+        get() = if (calories?.isNaN() == false) {
             ""
-        } else {
+        } else  {
             String.format(Locale.getDefault(), "%.0f", calories)
         }
 
     val referenceAmountString: String
-        get() = if (java.lang.Float.isNaN(reference_amount)) {
+        get() = if (reference_amount?.isNaN() == false) {
             "-"
         } else {
             String.format(Locale.getDefault(), "%.1f g", reference_amount)
@@ -105,6 +106,7 @@ data class FoodItem (
         categoryName = p.readString()
         date = IsoTimeConverter().stringToOffsetDateTime(p.readString())
         ean = p.readLong()
+        amount = p.readFloat()
         reference_amount = p.readFloat()
         calories = p.readFloat()
         manufacturer = p.readString()
@@ -160,6 +162,66 @@ data class FoodItem (
         }
     }
 
+    fun copyToScaled(scaledAmount: Float): FoodItem {
+        Log.i("amount", amount.toString())
+        Log.i("reference_amount", reference_amount.toString())
+        val curentAmount: Float? = if (amount?.isNaN() == false) amount else reference_amount
+        Log.i("curentAmount", curentAmount.toString())
+        Log.i("scaledAmount", scaledAmount.toString())
+        val scaledFood = FoodItem(
+                foodId = foodId,
+                type = type,
+                nameAddition = nameAddition,
+                author = author,
+                categoryId = categoryId,
+                categoryName = categoryName,
+                date = date,
+                ean = ean,
+                amount = scaledAmount,
+                reference_amount = reference_amount,
+                manufacturer = manufacturer,
+                relevance = relevance + 1.0f
+        )
+        if (curentAmount?.isNaN() == false) for (property in arrayOf(
+                FoodItem::calories,
+                FoodItem::total_fat,
+                FoodItem::saturated_fat,
+                FoodItem::cholesterol,
+                FoodItem::protein,
+                FoodItem::total_carbs,
+                FoodItem::sugar,
+                FoodItem::dietary_fiber,
+                FoodItem::salt,
+                FoodItem::sodium,
+                FoodItem::potassium,
+                FoodItem::copper,
+                FoodItem::iron,
+                FoodItem::magnesium,
+                FoodItem::manganese,
+                FoodItem::zinc,
+                FoodItem::phosphorous,
+                FoodItem::sulphur,
+                FoodItem::chloro,
+                FoodItem::fluoric,
+                FoodItem::vitamin_b1,
+                FoodItem::vitamin_b12,
+                FoodItem::vitamin_b6,
+                FoodItem::vitamin_c,
+                FoodItem::vitamin_d,
+                FoodItem::vitamin_e
+        )) {
+            if (property.get(this)?.isNaN() == false) {
+                property.set(scaledFood, property.get(this)!! / curentAmount * scaledAmount)
+            }
+        }
+        Log.i("scaledFood.calories", scaledFood.calories.toString())
+        return scaledFood
+    }
+
+    private fun nanIfNull(f: Float?): Float {
+        return f ?: Float.NaN
+    }
+
     override fun describeContents(): Int {
         return 0
     }
@@ -175,34 +237,35 @@ data class FoodItem (
         out.writeString(categoryName)
         out.writeString(IsoTimeConverter().offsetDateTimeToString(date))
         out.writeLong(ean)
-        out.writeFloat(reference_amount)
-        out.writeFloat(calories)
+        out.writeFloat(nanIfNull(amount))
+        out.writeFloat(nanIfNull(reference_amount))
+        out.writeFloat(nanIfNull(calories))
         out.writeString(manufacturer)
-        out.writeFloat(total_fat)
-        out.writeFloat(saturated_fat)
-        out.writeFloat(cholesterol)
-        out.writeFloat(protein)
-        out.writeFloat(total_carbs)
-        out.writeFloat(sugar)
-        out.writeFloat(dietary_fiber)
-        out.writeFloat(salt)
-        out.writeFloat(sodium)
-        out.writeFloat(potassium)
-        out.writeFloat(copper)
-        out.writeFloat(iron)
-        out.writeFloat(magnesium)
-        out.writeFloat(manganese)
-        out.writeFloat(zinc)
-        out.writeFloat(phosphorous)
-        out.writeFloat(sulphur)
-        out.writeFloat(chloro)
-        out.writeFloat(fluoric)
-        out.writeFloat(vitamin_b1)
-        out.writeFloat(vitamin_b12)
-        out.writeFloat(vitamin_b6)
-        out.writeFloat(vitamin_c)
-        out.writeFloat(vitamin_d)
-        out.writeFloat(vitamin_e)
+        out.writeFloat(nanIfNull(total_fat))
+        out.writeFloat(nanIfNull(saturated_fat))
+        out.writeFloat(nanIfNull(cholesterol))
+        out.writeFloat(nanIfNull(protein))
+        out.writeFloat(nanIfNull(total_carbs))
+        out.writeFloat(nanIfNull(sugar))
+        out.writeFloat(nanIfNull(dietary_fiber))
+        out.writeFloat(nanIfNull(salt))
+        out.writeFloat(nanIfNull(sodium))
+        out.writeFloat(nanIfNull(potassium))
+        out.writeFloat(nanIfNull(copper))
+        out.writeFloat(nanIfNull(iron))
+        out.writeFloat(nanIfNull(magnesium))
+        out.writeFloat(nanIfNull(manganese))
+        out.writeFloat(nanIfNull(zinc))
+        out.writeFloat(nanIfNull(phosphorous))
+        out.writeFloat(nanIfNull(sulphur))
+        out.writeFloat(nanIfNull(chloro))
+        out.writeFloat(nanIfNull(fluoric))
+        out.writeFloat(nanIfNull(vitamin_b1))
+        out.writeFloat(nanIfNull(vitamin_b12))
+        out.writeFloat(nanIfNull(vitamin_b6))
+        out.writeFloat(nanIfNull(vitamin_c))
+        out.writeFloat(nanIfNull(vitamin_d))
+        out.writeFloat(nanIfNull(vitamin_e))
         out.writeFloat(relevance)
         out.writeString(IsoTimeConverter().offsetDateTimeToString(lastLogged))
     }
@@ -227,7 +290,7 @@ data class FoodItem (
         if (check(json.get(property.name))) property.setter.call(json.get(property.name))
     }
 
-    fun setFloatFromJSON(property: KMutableProperty<Float>, json: JSONObject) {
+    fun setFloatFromJSON(property: KMutableProperty<Float?>, json: JSONObject) {
         if (json.isNull(property.name)) return
         val doubleValue: Double = json.getDouble(property.name)
         if (doubleValue.isNaN()) return
@@ -300,6 +363,7 @@ data class FoodItem (
                 name -> (name as String?).isNullOrBlank() } }
             food.author?.let { if (it.removeSurrounding(" ").isEmpty()) null; else it }
             arrayOf(
+                    food::amount,
                     food::reference_amount,
                     food::calories,
                     food::total_fat,

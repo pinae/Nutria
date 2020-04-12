@@ -2,8 +2,8 @@ package de.ct.nutria
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
@@ -11,26 +11,30 @@ import android.view.View
 import android.view.ViewGroup
 
 import de.ct.nutria.dummy.DummyContent
-import de.ct.nutria.dummy.DummyContent.DummyItem
+import kotlinx.android.synthetic.main.fragment_logged_fooditem_list.*
+import java.time.OffsetDateTime
+import java.util.ArrayList
 
 /**
  * A fragment representing a list of Items.
  * Activities containing this fragment MUST implement the
- * [LoggedFooditemFragment.OnListFragmentInteractionListener] interface.
+ * [LoggedFooditemFragment.OnLoggedFoodListInteractionListener] interface.
  */
-class LoggedFooditemFragment : Fragment() {
-
-    // TODO: Customize parameters
-    private var columnCount = 1
-
-    private var listener: OnListFragmentInteractionListener? = null
+class LoggedFooditemFragment : Fragment(), LoggedFoodRepositoryListener {
+    private val repository = LoggedFoodRepository(this)
+    private val parcelableFoodList = "de.ct.nutria.LoggedFooditemFragment.foodArray"
+    private var loggedFoodListInteractionListener: OnLoggedFoodListInteractionListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        arguments?.let {
-            columnCount = it.getInt(ARG_COLUMN_COUNT)
+        if (savedInstanceState != null) {
+            // Read arguments from Bundle
+            val savedFoodArray: ArrayList<FoodItem>? = savedInstanceState.getParcelableArrayList(
+                    parcelableFoodList)
+            if (savedFoodArray != null) repository.foodArray = savedFoodArray
         }
+        Log.i("onCreate", "starting to load logged food.")
+        repository.loadLoggedFoodForDay(OffsetDateTime.now())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -40,11 +44,8 @@ class LoggedFooditemFragment : Fragment() {
         // Set the adapter
         if (view is RecyclerView) {
             with(view) {
-                layoutManager = when {
-                    columnCount <= 1 -> LinearLayoutManager(context)
-                    else -> GridLayoutManager(context, columnCount)
-                }
-                adapter = LoggedFooditemRecyclerViewAdapter(DummyContent.ITEMS, listener)
+                layoutManager = LinearLayoutManager(context)
+                adapter = LoggedFoodItemRecyclerViewAdapter(repository.foodArray, loggedFoodListInteractionListener, resources)
             }
         }
         return view
@@ -52,46 +53,41 @@ class LoggedFooditemFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnListFragmentInteractionListener) {
-            listener = context
+        if (context is OnLoggedFoodListInteractionListener) {
+            loggedFoodListInteractionListener = context
         } else {
-            throw RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener")
+            throw RuntimeException(context.toString() +
+                    " must implement OnListFragmentInteractionListener")
         }
     }
 
     override fun onDetach() {
         super.onDetach()
-        listener = null
+        loggedFoodListInteractionListener = null
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson
-     * [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onListFragmentInteraction(item: DummyItem?)
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
+        super.onSaveInstanceState(savedInstanceState)
+        savedInstanceState.putParcelableArrayList(
+                parcelableFoodList, repository.foodArray)
+    }
+
+    override fun onFoodUpdate() {
+        Log.i("food Update", repository.foodArray.toString())
+        foodItemList.adapter?.notifyDataSetChanged()
+        Log.i("cnt", foodItemList.adapter?.itemCount.toString())
+    }
+
+    fun populateFoodArrayInRepository(food: FoodItem) {
+        if (repository.foodArray.isEmpty()) repository.foodArray.add(food)
+    }
+
+    interface OnLoggedFoodListInteractionListener {
+        fun onFoodDetilsRequested(food: FoodItem)
     }
 
     companion object {
-
-        // TODO: Customize parameter argument names
-        const val ARG_COLUMN_COUNT = "column-count"
-
-        // TODO: Customize parameter initialization
         @JvmStatic
-        fun newInstance(columnCount: Int) =
-                LoggedFooditemFragment().apply {
-                    arguments = Bundle().apply {
-                        putInt(ARG_COLUMN_COUNT, columnCount)
-                    }
-                }
+        fun newInstance() = LoggedFooditemFragment()
     }
 }

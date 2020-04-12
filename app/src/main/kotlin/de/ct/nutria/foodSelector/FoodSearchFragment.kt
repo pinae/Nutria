@@ -34,26 +34,19 @@ import java.util.HashMap
 class FoodSearchFragment : Fragment(), AdapterView.OnItemClickListener, FoodItemRepositoryListener {
     private val parcelableFoodList = "de.ct.nutria.foodSelector.FoodSearchFragment.foodArray"
     private var listSelectListener: OnListSelect? = null
-    private var repository: QueryFoodItemRepository? = null
+    private var repository: QueryFoodItemRepository = QueryFoodItemRepository(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //if (activity != null) {
-            //val foundFoodModel = ViewModelProviders.of(activity!!).get(FoundFoodViewModel::class.java)
-            //foundFoodModel.getFood().observe(activity!!, Observer<List<FoodItem>> { foodItems ->
-                // update UI
-            //})
-        //}
-        repository = QueryFoodItemRepository(this)
-        repository?.let{ it.manSt = ManufacturerDescriptionStrings(
+        repository.manSt = ManufacturerDescriptionStrings(
                 recipeBy = getString(R.string.recipe_by),
                 selfmade = getString(R.string.selfmade),
-                harvested = getString(R.string.harvested)) }
-        if (arguments != null && savedInstanceState != null) {
+                harvested = getString(R.string.harvested))
+        if (savedInstanceState != null) {
             // Read arguments from Bundle
             val savedFoodArray: ArrayList<FoodItem>? = savedInstanceState.getParcelableArrayList(
                     parcelableFoodList)
-            if (savedFoodArray != null) repository!!.foodArray = savedFoodArray
+            if (savedFoodArray != null) repository.foodArray = savedFoodArray
         }
     }
 
@@ -90,14 +83,14 @@ class FoodSearchFragment : Fragment(), AdapterView.OnItemClickListener, FoodItem
 
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
         super.onSaveInstanceState(savedInstanceState)
-        if (repository != null) savedInstanceState.putParcelableArrayList(
-                parcelableFoodList, repository!!.foodArray)
+        savedInstanceState.putParcelableArrayList(
+                parcelableFoodList, repository.foodArray)
     }
 
     override fun onItemClick(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
         Log.d("Item clicked with no", i.toString())
-        if (this.listSelectListener != null && repository != null)
-            this.listSelectListener!!.onListSelect(repository!!.foodArray[i])
+        if (this.listSelectListener != null)
+            this.listSelectListener!!.onListSelect(repository.foodArray[i])
     }
 
     /**
@@ -111,7 +104,7 @@ class FoodSearchFragment : Fragment(), AdapterView.OnItemClickListener, FoodItem
     }
 
     private fun requestList(query: CharSequence) {
-        repository?.let { it.query(query.toString()) }
+        repository.query(query.toString())
         updateList()
     }
 
@@ -121,17 +114,15 @@ class FoodSearchFragment : Fragment(), AdapterView.OnItemClickListener, FoodItem
                 selfmade = getString(R.string.selfmade),
                 harvested = getString(R.string.harvested))
         val displayFoodList = ArrayList<HashMap<String, String>>()
-        repository?.let {
-            for (item in it.foodArray) {
-                item.manSt = manSt
-                val entry = HashMap<String, String>()
-                entry["foodName"] = item.name
-                entry["manufacturer"] = item.describeManufacturer()
-                entry["calories"] = item.caloriesString
-                entry["reference_amount"] = item.referenceAmountString
-                entry["iconID"] = "%d".format(getIcon(item.categoryId))
-                displayFoodList.add(entry)
-            }
+        for (item in repository.foodArray) {
+            item.manSt = manSt
+            val entry = HashMap<String, String>()
+            entry["foodName"] = item.name
+            entry["manufacturer"] = item.describeManufacturer()
+            entry["calories"] = item.caloriesString
+            entry["reference_amount"] = item.referenceAmountString
+            entry["iconID"] = "%d".format(getIcon(item.categoryId))
+            displayFoodList.add(entry)
         }
         val fromArray = arrayOf("foodName", "manufacturer", "calories", "reference_amount", "iconID")
         val viewIndexes = intArrayOf(R.id.listFoodName, R.id.listManufacturer,
