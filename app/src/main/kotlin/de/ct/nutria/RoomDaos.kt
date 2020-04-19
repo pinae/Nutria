@@ -30,6 +30,9 @@ interface LoggedFoodDao {
     @Query("SELECT * FROM loggedFood WHERE (type=:type AND foodId=:foodId) ORDER BY lastLogged ASC LIMIT 1")
     fun getFood(type: Int, foodId: Int): FoodItem?
 
+    @Query("SELECT * FROM loggedFood WHERE roomId=:roomId LIMIT 1")
+    fun getFood(roomId: Int): FoodItem?
+
     @Query("SELECT * FROM loggedFood WHERE (type=:type AND foodId=:foodId)")
     fun getFoods(type: Int, foodId: Int): List<FoodItem>
 

@@ -22,6 +22,7 @@ class SearchFoodActivity : AppCompatActivity(), FoodSearchFragment.OnListSelect 
     }
 
     override fun onListSelect(item: FoodItem) {
+        item.roomId = null
         val intent = Intent(this, FoodDetailsActivity::class.java)
         intent.putExtra("foodItem", item)
         startActivity(intent)

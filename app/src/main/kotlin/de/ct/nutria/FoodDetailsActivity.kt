@@ -39,8 +39,16 @@ class FoodDetailsActivity : AppCompatActivity(), LoggedFoodRepositoryListener {
                 Log.i("save button", textInputAmount.text.toString().toFloat().toString())
                 val selectedFood = repository.foodArray[0].copyToScaled(
                         textInputAmount.text.toString().toFloat())
-                if (selectedFood.lastLogged == null) selectedFood.lastLogged = OffsetDateTime.now()
-                repository.saveToRoom(selectedFood)
+                if (selectedFood.lastLogged == null)
+                    selectedFood.lastLogged = OffsetDateTime.now()
+                Log.i("before save or update", selectedFood.roomId.toString())
+                if (selectedFood.roomId != null && selectedFood.roomId!! < 0)
+                    selectedFood.roomId = null
+                if (selectedFood.roomId == null) {
+                    repository.saveToRoom(selectedFood)
+                } else {
+                    repository.updateInRoom(selectedFood)
+                }
                 val intent = Intent(this, MainActivity::class.java)
                 intent.putExtra("foodItem", selectedFood)
                 startActivity(intent)

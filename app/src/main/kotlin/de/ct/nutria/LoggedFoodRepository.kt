@@ -33,7 +33,7 @@ class LoggedFoodRepository(var listener: LoggedFoodRepositoryListener) {
         listener.onFoodUpdate()
     }
 
-    private fun loadDetailedFoodFromServer(type: Int, foodId: Int) {
+    private fun loadDetailedFoodFromServer(type: Int, foodId: Int, roomId: Int? = null) {
         requestOngoing = true
         doAsync {
             Log.i("request to", "https://nutria.db.pinae.net/json/food/$type$foodId/100")
@@ -43,6 +43,7 @@ class LoggedFoodRepository(var listener: LoggedFoodRepositoryListener) {
             Log.i("__json", JSONObject(detailedFoodJson).toString())
             val food = FoodItem.fromJSONObject(JSONObject(detailedFoodJson))
             food?.let { if (it.type == 1) it.reference_amount = 100f }
+            roomId?.let { food?.roomId = it }
             Log.i("received food", food.toString())
             uiThread {
                 requestOngoing = false
@@ -54,7 +55,7 @@ class LoggedFoodRepository(var listener: LoggedFoodRepositoryListener) {
         }
     }
 
-    private fun loadDetailedFoodFromRoom(type: Int, foodId: Int) {
+    private fun loadDetailedFoodFromRoom(type: Int, foodId: Int, roomId: Int? = null) {
         doAsync {
             val loggedFoodDao = cacheDb.loggedFoodDao()
             Log.i("ROOM query", type.toString() + foodId.toString())
@@ -63,8 +64,8 @@ class LoggedFoodRepository(var listener: LoggedFoodRepositoryListener) {
             val result = loggedFoodDao.getFoods(type, foodId)
             Log.i("ROOM result", result.toString())
             Log.i("  count", loggedFoodDao.getFoodCount(type, foodId).toString())
-            val food: FoodItem? = if (loggedFoodDao.getFoodCount(type, foodId) > 0)
-                loggedFoodDao.getFood(type, foodId) else null
+            val food: FoodItem? = if (roomId == null) { if (loggedFoodDao.getFoodCount(type, foodId) > 0)
+                loggedFoodDao.getFood(type, foodId) else null } else loggedFoodDao.getFood(roomId)
             Log.i("  food from roomDB", food.toString())
             uiThread {
                 Log.i("food from roomDB", food.toString())
@@ -117,10 +118,19 @@ class LoggedFoodRepository(var listener: LoggedFoodRepositoryListener) {
         }
     }
 
+    fun updateInRoom(food: FoodItem) {
+        doAsync {
+            val loggedFoodDao = cacheDb.loggedFoodDao()
+            Log.i("updateInRoom", food.toString())
+            loggedFoodDao.updateAll(food)
+            Log.i("updateInRoom - finished", food.toString())
+        }
+    }
+
     fun updateDetailsForAllFoods() {
         foodArray.forEach {
-            loadDetailedFoodFromRoom(it.type, it.foodId)
-            loadDetailedFoodFromServer(it.type, it.foodId)
+            loadDetailedFoodFromRoom(it.type, it.foodId, it.roomId)
+            loadDetailedFoodFromServer(it.type, it.foodId, it.roomId)
         }
     }
 }

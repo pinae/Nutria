@@ -43,10 +43,10 @@
                 android:layout_marginTop="@dimen/fooditem_margin_top"
                 android:text="@string/zero"
                 android:textAppearance="?attr/textAppearanceListItem"
-                android:textColor="@color/colorUnimportant"
-                android:textSize="@dimen/fooditem_name_size"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/fooditem_additional_text_size"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

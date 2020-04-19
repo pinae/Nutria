@@ -169,6 +169,7 @@ data class FoodItem (
         Log.i("curentAmount", curentAmount.toString())
         Log.i("scaledAmount", scaledAmount.toString())
         val scaledFood = FoodItem(
+                roomId = roomId,
                 foodId = foodId,
                 type = type,
                 nameAddition = nameAddition,
@@ -180,6 +181,7 @@ data class FoodItem (
                 amount = scaledAmount,
                 reference_amount = reference_amount,
                 manufacturer = manufacturer,
+                lastLogged = lastLogged,
                 relevance = relevance + 1.0f
         )
         if (curentAmount?.isNaN() == false) for (property in arrayOf(

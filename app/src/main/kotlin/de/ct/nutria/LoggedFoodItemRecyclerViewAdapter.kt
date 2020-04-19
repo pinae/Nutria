@@ -35,7 +35,9 @@ class LoggedFoodItemRecyclerViewAdapter(
         val item = displayedFood[position]
         holder.nameView.text = item.name
         holder.manufacturerView.text = item.describeManufacturer()
-        holder.caloriesView.text = item.calories.toString()
+        holder.caloriesView.text = resources.getString(
+                R.string.nutrition_display_float_no_decimals).format(item.calories,
+                resources.getString(R.string.unit_kcal))
         holder.iconView.setImageDrawable(resources.getDrawable(getIcon(item.categoryId), null))
 
         with(holder.v) {

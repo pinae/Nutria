@@ -60,10 +60,11 @@
     <string name="_200g">200g</string>
     <string name="_500g">500g</string>
     <string name="nutrition_display_float">%.2f %s</string>
+    <string name="nutrition_display_float_no_decimals">%.0f %s</string>
     <string name="nutrition_display_ulong">%lu %s</string>
     <string name="nutrition_display_string">%s %s</string>
     <string name="nutrition_display_date">yyyy-MM-dd hh:mm</string>
-    <string name="unit_kcal">kcal</string>
+    <string name="unit_kcal">kCal</string>
     <string name="unit_g">g</string>
     <string name="unit_mg">mg</string>
     <string name="delete_local_database_including_logged_food">Delete local database (including logged food)</string>
