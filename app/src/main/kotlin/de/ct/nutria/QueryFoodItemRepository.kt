@@ -115,6 +115,7 @@ class QueryFoodItemRepository(var listener: FoodItemRepositoryListener) {
                 queryFoodItemDao.updateAll(newFood)
             }
         }
+        queryFoodItemDao.deleteIrrelevant(prefs.sizeQueryCache)
     }
 
     private fun addToRoomDB(vararg foods: QueryFoodItem) {
@@ -127,6 +128,7 @@ class QueryFoodItemRepository(var listener: FoodItemRepositoryListener) {
                     queryFoodItemDao.updateAll(it)
                 }
             }
+            queryFoodItemDao.deleteIrrelevant(prefs.sizeQueryCache)
         }
     }
 }

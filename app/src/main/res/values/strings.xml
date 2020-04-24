@@ -69,5 +69,8 @@
     <string name="unit_mg">mg</string>
     <string name="delete_local_database_including_logged_food">Delete local database (including logged food)</string>
     <string name="database_deletion_finished">Your local database was deleted.</string>
+    <string name="hazardous_settings">Use the settings below only if you know exactly what you are doing!</string>
+    <string name="defaultQueryCacheSize">5000</string>
+    <string name="maximumQueryCacheSize">Maximum size for the Query Cache:</string>
 
 </resources>

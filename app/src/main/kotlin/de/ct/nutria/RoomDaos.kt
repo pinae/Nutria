@@ -15,6 +15,9 @@ interface QueryFoodItemDao {
     @Query("SELECT * FROM food WHERE categoryId=:categoryId")
     fun getAllFoodsOfCategory(categoryId: Long): List<QueryFoodItem>
 
+    @Query("DELETE FROM food WHERE foodId NOT IN ( SELECT foodId FROM food ORDER BY relevance DESC LIMIT :keepLimit )")
+    fun deleteIrrelevant(keepLimit: Int)
+
     @Insert
     fun insertAll(vararg foods: QueryFoodItem)
 

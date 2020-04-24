@@ -7,12 +7,17 @@ import androidx.room.Room
 
 class SharedPreferencesWrapper(context: Context) {
     private val prefsFilename = "net.pinae.nutria.prefs"
-    private val calirieBudgetKey = "calorieBudget"
+    private val calorieBudgetKey = "calorieBudget"
+    private val sizeQueryCacheKey = "sizeQueryCache"
     private val prefs: SharedPreferences = context.getSharedPreferences(prefsFilename, 0)
 
     var calorieBudget: Float
-        get() = prefs.getFloat(calirieBudgetKey, 2000f)
-        set(value) = prefs.edit().putFloat(calirieBudgetKey, value).apply()
+        get() = prefs.getFloat(calorieBudgetKey, 2000f)
+        set(value) = prefs.edit().putFloat(calorieBudgetKey, value).apply()
+
+    var sizeQueryCache: Int
+        get() = prefs.getInt(sizeQueryCacheKey, 5000)
+        set(value) = prefs.edit().putInt(sizeQueryCacheKey, value).apply()
 }
 
 val prefs: SharedPreferencesWrapper = NutriaApplication.sharedPreferences!!

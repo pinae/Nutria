@@ -7,6 +7,41 @@
     android:orientation="vertical"
     tools:context=".PreferencesFragment">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/food_detail_property_spacing"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textViewQueryCacheSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="@string/maximumQueryCacheSize" />
+
+        <EditText
+            android:id="@+id/editTextQueryCacheSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/defaultQueryCacheSize"
+            android:autofillHints="@string/defaultQueryCacheSize"
+            android:ems="10"
+            android:inputType="number" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:padding="8dp"
+        android:text="@string/hazardous_settings"
+        android:textAlignment="center"
+        android:textColor="@color/design_default_color_error"
+        android:textSize="@dimen/food_detail_name_size" />
+
     <Button
         android:id="@+id/deleteDatabaseButton"
         android:layout_width="match_parent"

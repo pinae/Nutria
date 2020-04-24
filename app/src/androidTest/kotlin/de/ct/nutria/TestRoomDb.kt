@@ -56,7 +56,7 @@ class TestRoomDaos {
     fun check_empty_database() {
         val queryFoodItemDao = cachedFoodDatabase.queryFoodItemDao()
         assertEquals(
-                queryFoodItemDao.getFood("Backzutat: foo") as QueryFoodItem?,
+                queryFoodItemDao.getFood("Backzutat: foo"),
                 null)
     }
 
@@ -136,6 +136,21 @@ class TestRoomDaos {
         assertEquals(
                 queryFoodItemDao.queryFood(""),
                 listOf(updatedFood))
+    }
+
+    @Test
+    fun shortenCache() {
+        val queryFoodItemDao = cachedFoodDatabase.queryFoodItemDao()
+        val exampleFoodFoo = get_example_food_foo()
+        val exampleFoodBar = get_example_food_bar()
+        queryFoodItemDao.insertAll(exampleFoodFoo, exampleFoodBar)
+        assertEquals(
+                queryFoodItemDao.queryFood(""),
+                listOf(exampleFoodFoo, exampleFoodBar))
+        queryFoodItemDao.deleteIrrelevant(1)
+        assertEquals(
+                queryFoodItemDao.queryFood(""),
+                listOf(exampleFoodFoo))
     }
 
     @Test
