@@ -26,16 +26,17 @@ data class FoodItem (
     @ColumnInfo(name = "roomId") var roomId: Int? = null,
     @ColumnInfo(name = "foodId") var foodId: Int = -1,
     @ColumnInfo(name = "type") var type: Int = 0,
-    @ColumnInfo(name = "nameAddition") var nameAddition: String? = null,
-    @ColumnInfo(name = "author") var author: String? = null,
     @ColumnInfo(name = "categoryId") var categoryId: Int = 0,
     @ColumnInfo(name = "categoryName") var categoryName: String? = null,
-    @ColumnInfo(name = "date") var date: OffsetDateTime? = null,
-    @ColumnInfo(name = "ean") var ean: Long = -1,
-    @ColumnInfo(name = "amount") var amount: Float? = java.lang.Float.NaN,
-    @ColumnInfo(name = "reference_amount") var reference_amount: Float? = java.lang.Float.NaN,
-    @ColumnInfo(name = "calories") var calories: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "nameAddition") var nameAddition: String? = null,
+    @ColumnInfo(name = "author") var author: String? = null,
     @ColumnInfo(name = "manufacturer") var manufacturer: String? = null,
+    @ColumnInfo(name = "ean") var ean: Long = -1,
+    @ColumnInfo(name = "date") var date: OffsetDateTime? = null,
+    @ColumnInfo(name = "lastLogged") var lastLogged: OffsetDateTime? = null,
+    @ColumnInfo(name = "amount") var amount: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "referenceAmount") var referenceAmount: Float? = java.lang.Float.NaN,
+    @ColumnInfo(name = "calories") var calories: Float? = java.lang.Float.NaN,
     @ColumnInfo(name = "total_fat") var total_fat: Float? = java.lang.Float.NaN,
     @ColumnInfo(name = "saturated_fat") var saturated_fat: Float? = java.lang.Float.NaN,
     @ColumnInfo(name = "cholesterol") var cholesterol: Float? = java.lang.Float.NaN,
@@ -62,7 +63,6 @@ data class FoodItem (
     @ColumnInfo(name = "vitamin_d") var vitamin_d: Float? = java.lang.Float.NaN,
     @ColumnInfo(name = "vitamin_e") var vitamin_e: Float? = java.lang.Float.NaN,
     @ColumnInfo(name = "relevance") var relevance: Float = 1f,
-    @ColumnInfo(name = "lastLogged") var lastLogged: OffsetDateTime? = null,
     @Ignore var manSt: ManufacturerDescriptionStrings = ManufacturerDescriptionStrings()
 ) : Parcelable {
     var name: String
@@ -80,10 +80,10 @@ data class FoodItem (
         }
 
     val referenceAmountString: String
-        get() = if (reference_amount?.isNaN() == false) {
+        get() = if (referenceAmount?.isNaN() == false) {
             "-"
         } else {
-            String.format(Locale.getDefault(), "%.1f g", reference_amount)
+            String.format(Locale.getDefault(), "%.1f g", referenceAmount)
         }
 
     @Ignore
@@ -92,51 +92,29 @@ data class FoodItem (
         this.date = OffsetDateTime.now()
         this.categoryId = -1
         this.type = 0
-        this.reference_amount = 100.0f
+        this.referenceAmount = 100.0f
     }
 
     @Ignore
     private constructor(p: Parcel) : this() {
         roomId = p.readInt()
-        type = p.readInt()
         foodId = p.readInt()
-        nameAddition = p.readString()
-        author = p.readString()
+        type = p.readInt()
         categoryId = p.readInt()
         categoryName = p.readString()
-        date = IsoTimeConverter().stringToOffsetDateTime(p.readString())
+        nameAddition = p.readString()
+        sourceProperties().forEach { property ->
+            property.setter.call(this, p.readString())
+        }
         ean = p.readLong()
-        amount = p.readFloat()
-        reference_amount = p.readFloat()
-        calories = p.readFloat()
-        manufacturer = p.readString()
-        total_fat = p.readFloat()
-        saturated_fat = p.readFloat()
-        cholesterol = p.readFloat()
-        protein = p.readFloat()
-        total_carbs = p.readFloat()
-        sugar = p.readFloat()
-        dietary_fiber = p.readFloat()
-        salt = p.readFloat()
-        sodium = p.readFloat()
-        potassium = p.readFloat()
-        copper = p.readFloat()
-        iron = p.readFloat()
-        magnesium = p.readFloat()
-        manganese = p.readFloat()
-        zinc = p.readFloat()
-        phosphorous = p.readFloat()
-        sulphur = p.readFloat()
-        chloro = p.readFloat()
-        fluoric = p.readFloat()
-        vitamin_b1 = p.readFloat()
-        vitamin_b12 = p.readFloat()
-        vitamin_b6 = p.readFloat()
-        vitamin_c = p.readFloat()
-        vitamin_d = p.readFloat()
-        vitamin_e = p.readFloat()
-        relevance = p.readFloat()
+        date = IsoTimeConverter().stringToOffsetDateTime(p.readString())
         lastLogged = IsoTimeConverter().stringToOffsetDateTime(p.readString())
+        amount = p.readFloat()
+        referenceAmount = p.readFloat()
+        scalableProperties().forEach { property ->
+            property.setter.call(this, p.readFloat())
+        }
+        relevance = p.readFloat()
     }
 
     fun setCategory(id: Int, categoryName: String) {
@@ -162,10 +140,40 @@ data class FoodItem (
         }
     }
 
+    fun getCsvLine(): String {
+        var csvLine = FoodItem::roomId.get(this).toString()
+        csvLine += csvSep() + FoodItem::foodId.get(this).toString()
+        csvLine += csvSep() + FoodItem::type.get(this).toString()
+        csvLine += csvSep() + FoodItem::categoryId.get(this).toString()
+        csvLine += csvSep() + FoodItem::categoryName.get(this)
+        csvLine += csvSep() + FoodItem::nameAddition.get(this)
+        sourceProperties().forEach { csvLine += csvSep() + it.getter.call(this) }
+        csvLine += csvSep() + FoodItem::ean.get(this).toString()
+        csvLine += csvSep() + IsoTimeConverter().offsetDateTimeToString(
+                FoodItem::date.get(this))
+        csvLine += csvSep() + IsoTimeConverter().offsetDateTimeToString(
+                FoodItem::lastLogged.get(this))
+        csvLine += csvSep() + String.format(
+                Locale.ENGLISH,
+                "%.5f", FoodItem::amount.get(this))
+        csvLine += csvSep() + String.format(
+                Locale.ENGLISH,
+                "%.5f", FoodItem::referenceAmount.get(this))
+        scalableProperties().forEach {
+            csvLine += csvSep() + String.format(
+                    Locale.ENGLISH,
+                    "%.5f", it.getter.call(this))
+        }
+        csvLine += csvSep() + String.format(
+                Locale.ENGLISH,
+                "%.5f", FoodItem::relevance.get(this))
+        return csvLine
+    }
+
     fun copyToScaled(scaledAmount: Float): FoodItem {
         Log.i("amount", amount.toString())
-        Log.i("reference_amount", reference_amount.toString())
-        val curentAmount: Float? = if (amount?.isNaN() == false) amount else reference_amount
+        Log.i("reference_amount", referenceAmount.toString())
+        val curentAmount: Float? = if (amount?.isNaN() == false) amount else referenceAmount
         Log.i("curentAmount", curentAmount.toString())
         Log.i("scaledAmount", scaledAmount.toString())
         val scaledFood = FoodItem(
@@ -179,41 +187,15 @@ data class FoodItem (
                 date = date,
                 ean = ean,
                 amount = scaledAmount,
-                reference_amount = reference_amount,
+                referenceAmount = referenceAmount,
                 manufacturer = manufacturer,
                 lastLogged = lastLogged,
                 relevance = relevance + 1.0f
         )
-        if (curentAmount?.isNaN() == false) for (property in arrayOf(
-                FoodItem::calories,
-                FoodItem::total_fat,
-                FoodItem::saturated_fat,
-                FoodItem::cholesterol,
-                FoodItem::protein,
-                FoodItem::total_carbs,
-                FoodItem::sugar,
-                FoodItem::dietary_fiber,
-                FoodItem::salt,
-                FoodItem::sodium,
-                FoodItem::potassium,
-                FoodItem::copper,
-                FoodItem::iron,
-                FoodItem::magnesium,
-                FoodItem::manganese,
-                FoodItem::zinc,
-                FoodItem::phosphorous,
-                FoodItem::sulphur,
-                FoodItem::chloro,
-                FoodItem::fluoric,
-                FoodItem::vitamin_b1,
-                FoodItem::vitamin_b12,
-                FoodItem::vitamin_b6,
-                FoodItem::vitamin_c,
-                FoodItem::vitamin_d,
-                FoodItem::vitamin_e
-        )) {
-            if (property.get(this)?.isNaN() == false) {
-                property.set(scaledFood, property.get(this)!! / curentAmount * scaledAmount)
+        if (curentAmount?.isNaN() == false) for (property in scalableProperties()) {
+            if (property.getter.call(this)?.isNaN() == false) {
+                property.setter.call(scaledFood,
+                        property.getter.call(this)!! / curentAmount * scaledAmount)
             }
         }
         Log.i("scaledFood.calories", scaledFood.calories.toString())
@@ -231,45 +213,23 @@ data class FoodItem (
     override fun writeToParcel(out: Parcel, flags: Int) {
         if (roomId != null) out.writeInt(roomId!!)
         else out.writeValue(roomId)
-        out.writeInt(type)
         out.writeInt(foodId)
-        out.writeString(nameAddition)
-        out.writeString(author)
+        out.writeInt(type)
         out.writeInt(categoryId)
         out.writeString(categoryName)
-        out.writeString(IsoTimeConverter().offsetDateTimeToString(date))
+        out.writeString(nameAddition)
+        sourceProperties().forEach {property ->
+            out.writeString(property.getter.call(this))
+        }
         out.writeLong(ean)
-        out.writeFloat(nanIfNull(amount))
-        out.writeFloat(nanIfNull(reference_amount))
-        out.writeFloat(nanIfNull(calories))
-        out.writeString(manufacturer)
-        out.writeFloat(nanIfNull(total_fat))
-        out.writeFloat(nanIfNull(saturated_fat))
-        out.writeFloat(nanIfNull(cholesterol))
-        out.writeFloat(nanIfNull(protein))
-        out.writeFloat(nanIfNull(total_carbs))
-        out.writeFloat(nanIfNull(sugar))
-        out.writeFloat(nanIfNull(dietary_fiber))
-        out.writeFloat(nanIfNull(salt))
-        out.writeFloat(nanIfNull(sodium))
-        out.writeFloat(nanIfNull(potassium))
-        out.writeFloat(nanIfNull(copper))
-        out.writeFloat(nanIfNull(iron))
-        out.writeFloat(nanIfNull(magnesium))
-        out.writeFloat(nanIfNull(manganese))
-        out.writeFloat(nanIfNull(zinc))
-        out.writeFloat(nanIfNull(phosphorous))
-        out.writeFloat(nanIfNull(sulphur))
-        out.writeFloat(nanIfNull(chloro))
-        out.writeFloat(nanIfNull(fluoric))
-        out.writeFloat(nanIfNull(vitamin_b1))
-        out.writeFloat(nanIfNull(vitamin_b12))
-        out.writeFloat(nanIfNull(vitamin_b6))
-        out.writeFloat(nanIfNull(vitamin_c))
-        out.writeFloat(nanIfNull(vitamin_d))
-        out.writeFloat(nanIfNull(vitamin_e))
-        out.writeFloat(relevance)
+        out.writeString(IsoTimeConverter().offsetDateTimeToString(date))
         out.writeString(IsoTimeConverter().offsetDateTimeToString(lastLogged))
+        out.writeFloat(nanIfNull(amount))
+        out.writeFloat(nanIfNull(referenceAmount))
+        scalableProperties().forEach { property ->
+            out.writeFloat(nanIfNull(property.getter.call(this)))
+        }
+        out.writeFloat(relevance)
     }
 
     fun toQueryFoodItem(): QueryFoodItem {
@@ -281,22 +241,29 @@ data class FoodItem (
                 calories = calories,
                 source = describeManufacturer(),
                 ean = ean,
-                referenceAmount = reference_amount,
+                referenceAmount = referenceAmount,
                 relevance = relevance,
                 lastLogged = lastLogged
         )
     }
 
-    fun setFromJSON(property: KMutableProperty<*>, json: JSONObject, check: (Any) -> Boolean) {
+    private fun setFromJSON(property: KMutableProperty<*>, json: JSONObject, check: (Any) -> Boolean) {
         if (json.isNull(property.name)) return
-        if (check(json.get(property.name))) property.setter.call(json.get(property.name))
+        if (check(json.get(property.name)))
+            property.setter.call(this, json.get(property.name))
     }
 
-    fun setFloatFromJSON(property: KMutableProperty<Float?>, json: JSONObject) {
+    private fun setIntFromJSON(property: KMutableProperty<Int>, json: JSONObject, check: (Any) -> Boolean) {
+        if (json.isNull(property.name)) return
+        if (check(json.getInt(property.name)))
+            property.setter.call(this, json.getInt(property.name))
+    }
+
+    private fun setFloatFromJSON(property: KMutableProperty<Float?>, json: JSONObject) {
         if (json.isNull(property.name)) return
         val doubleValue: Double = json.getDouble(property.name)
         if (doubleValue.isNaN()) return
-        property.setter.call(doubleValue.toFloat())
+        property.setter.call(this, doubleValue.toFloat())
     }
 
     companion object {
@@ -327,7 +294,7 @@ data class FoodItem (
             else food.manufacturer = queryFoodItem.source
             queryFoodItem.ean?.let { food.ean = it }
             queryFoodItem.calories?.let { food.calories = it }
-            queryFoodItem.referenceAmount?.let { food.reference_amount = it }
+            queryFoodItem.referenceAmount?.let { food.referenceAmount = it }
             food.relevance = queryFoodItem.relevance
             food.lastLogged = queryFoodItem.lastLogged
             return food
@@ -352,47 +319,18 @@ data class FoodItem (
             food.nameAddition = nameAddition
             food.nameAddition?.let{Log.i("nameAddition", it)}
             food.categoryName = loadedName.split(": ")[0]
-            arrayOf(
-                    food::type,
-                    food::foodId,
-                    food::categoryId,
-                    food::ean
-            ).map { food.setFromJSON(it, detailedFood) { true } }
-            arrayOf(
-                    food::manufacturer,
-                    food::author
-            ).map { food.setFromJSON(it, detailedFood) {
+            if (!detailedFood.isNull("foodId"))
+                food.foodId = detailedFood.getInt("foodId")
+            if (!detailedFood.isNull("type"))
+                food.type = detailedFood.getInt("type")
+            if (!detailedFood.isNull("categoryId"))
+                food.categoryId = detailedFood.getInt("categoryId")
+            if (!detailedFood.isNull("ean"))
+                food.ean = detailedFood.getLong("ean")
+            sourceProperties().map { food.setFromJSON(it, detailedFood) {
                 name -> (name as String?).isNullOrBlank() } }
             food.author?.let { if (it.removeSurrounding(" ").isEmpty()) null; else it }
-            arrayOf(
-                    food::amount,
-                    food::reference_amount,
-                    food::calories,
-                    food::total_fat,
-                    food::saturated_fat,
-                    food::cholesterol,
-                    food::protein,
-                    food::total_carbs,
-                    food::sugar,
-                    food::dietary_fiber,
-                    food::salt,
-                    food::sodium,
-                    food::potassium,
-                    food::copper,
-                    food::iron,
-                    food::magnesium,
-                    food::manganese,
-                    food::zinc,
-                    food::phosphorous,
-                    food::sulphur,
-                    food::chloro,
-                    food::vitamin_b1,
-                    food::vitamin_b12,
-                    food::vitamin_b6,
-                    food::vitamin_c,
-                    food::vitamin_d,
-                    food::vitamin_e
-            ).map { food.setFloatFromJSON(it, detailedFood) }
+            scalableProperties().map { food.setFloatFromJSON(it, detailedFood) }
             if (detailedFood.has("date") &&
                     !detailedFood.getString("date").isNullOrBlank())
                 food.date = IsoTimeConverter().stringToOffsetDateTime(
@@ -413,9 +351,61 @@ data class FoodItem (
                 0 -> food.manufacturer = manufacturerOrAuthor
                 1 -> food.author = manufacturerOrAuthor
             }
-            food.reference_amount = (jsonFood[4] as String).toFloat()
+            food.referenceAmount = (jsonFood[4] as String).toFloat()
             food.calories = (jsonFood[5] as String).toFloat()
             return food
+        }
+
+        fun scalableProperties() = arrayOf(
+                FoodItem::calories,
+                FoodItem::total_fat,
+                FoodItem::saturated_fat,
+                FoodItem::cholesterol,
+                FoodItem::protein,
+                FoodItem::total_carbs,
+                FoodItem::sugar,
+                FoodItem::dietary_fiber,
+                FoodItem::salt,
+                FoodItem::sodium,
+                FoodItem::potassium,
+                FoodItem::copper,
+                FoodItem::iron,
+                FoodItem::magnesium,
+                FoodItem::manganese,
+                FoodItem::zinc,
+                FoodItem::phosphorous,
+                FoodItem::sulphur,
+                FoodItem::chloro,
+                FoodItem::fluoric,
+                FoodItem::vitamin_b1,
+                FoodItem::vitamin_b12,
+                FoodItem::vitamin_b6,
+                FoodItem::vitamin_c,
+                FoodItem::vitamin_d,
+                FoodItem::vitamin_e)
+
+        fun sourceProperties() = arrayOf(
+                FoodItem::author,
+                FoodItem::manufacturer)
+
+        private fun csvSep() = ", "
+
+        fun getCsvHeader(): String {
+            var csvHeader = FoodItem::roomId.name
+            csvHeader += csvSep() + FoodItem::foodId.name
+            csvHeader += csvSep() + FoodItem::type.name
+            csvHeader += csvSep() + FoodItem::categoryId.name
+            csvHeader += csvSep() + FoodItem::categoryName.name
+            csvHeader += csvSep() + FoodItem::nameAddition.name
+            sourceProperties().forEach { csvHeader += csvSep() + it.name }
+            csvHeader += csvSep() + FoodItem::ean.name
+            csvHeader += csvSep() + FoodItem::date.name
+            csvHeader += csvSep() + FoodItem::lastLogged.name
+            csvHeader += csvSep() + FoodItem::amount.name
+            csvHeader += csvSep() + FoodItem::referenceAmount.name
+            scalableProperties().forEach { csvHeader += csvSep() + it.name }
+            csvHeader += csvSep() + FoodItem::relevance.name
+            return csvHeader
         }
     }
 }

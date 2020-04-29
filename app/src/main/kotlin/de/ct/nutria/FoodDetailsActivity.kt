@@ -2,7 +2,6 @@ package de.ct.nutria
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +11,7 @@ import kotlinx.android.synthetic.main.activity_food_details.*
 import kotlinx.android.synthetic.main.activity_food_details.toolbar
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 class FoodDetailsActivity : AppCompatActivity(), LoggedFoodRepositoryListener {
     private val repository = LoggedFoodRepository(this)
@@ -29,6 +29,11 @@ class FoodDetailsActivity : AppCompatActivity(), LoggedFoodRepositoryListener {
             intent.getParcelableExtra<FoodItem>("foodItem")?.let {
                 repository.clear()
                 repository.replaceOrAppend(it)
+                if (it.amount != null) {
+                    textInputAmount.setText(String.format(
+                            Locale.ENGLISH,
+                            "%.1f", it.amount))
+                }
                 repository.updateDetailsForAllFoods()
             }
         textInputAmount.addTextChangedListener {
@@ -36,12 +41,10 @@ class FoodDetailsActivity : AppCompatActivity(), LoggedFoodRepositoryListener {
         }
         fab.setOnClickListener {
             view -> if (repository.foodArray.isNotEmpty()) {
-                Log.i("save button", textInputAmount.text.toString().toFloat().toString())
                 val selectedFood = repository.foodArray[0].copyToScaled(
                         textInputAmount.text.toString().toFloat())
                 if (selectedFood.lastLogged == null)
                     selectedFood.lastLogged = OffsetDateTime.now()
-                Log.i("before save or update", selectedFood.roomId.toString())
                 if (selectedFood.roomId != null && selectedFood.roomId!! < 0)
                     selectedFood.roomId = null
                 if (selectedFood.roomId == null) {
@@ -117,7 +120,7 @@ class FoodDetailsActivity : AppCompatActivity(), LoggedFoodRepositoryListener {
         updateTextView(food.author, textViewAuthorName, authorBlock)
         updateTextView(food.ean, textViewEan, eanLine)
         updateTextView(food.date, textViewDate, textViewDate)
-        updateTextView(food.reference_amount, textViewReferenceAmount, textViewReferenceAmount)
+        updateTextView(food.referenceAmount, textViewReferenceAmount, textViewReferenceAmount)
         updateTextView(food.calories, textViewCalories, caloriesLine,
                 getString(R.string.unit_kcal))
         updateTextView(food.total_fat, textViewTotalFat, totalFatLine,

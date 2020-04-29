@@ -31,6 +31,18 @@
             android:inputType="number" />
     </LinearLayout>
 
+    <Button
+        android:id="@+id/exportCsvButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/food_detail_property_spacing"
+        android:background="@color/colorPrimaryDark"
+        android:onClick="shareCSV"
+        android:text="@string/share_logged_food_as_csv"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/design_default_color_on_primary"
+        app:cornerRadius="8sp" />
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"

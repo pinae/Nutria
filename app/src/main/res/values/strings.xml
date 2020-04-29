@@ -72,5 +72,6 @@
     <string name="hazardous_settings">Use the settings below only if you know exactly what you are doing!</string>
     <string name="defaultQueryCacheSize">5000</string>
     <string name="maximumQueryCacheSize">Maximum size for the Query Cache:</string>
+    <string name="share_logged_food_as_csv">Share logged food as CSV</string>
 
 </resources>

@@ -1,7 +1,6 @@
 package de.ct.nutria
 
 import android.database.sqlite.SQLiteConstraintException
-import android.util.Log
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.json.JSONArray
@@ -71,7 +70,6 @@ class QueryFoodItemRepository(var listener: FoodItemRepositoryListener) {
     fun queryRoomDB(query: String) {
         doAsync {
             val queryFoodItemDao : QueryFoodItemDao = cacheDb.queryFoodItemDao()
-            Log.i("Room query", queryFoodItemDao.queryFood(query).toString())
             val loadedFoodList = ArrayList<FoodItem>()
             queryFoodItemDao.queryFood(query.toLowerCase().trim()).forEach {
                 loadedFoodList.add(FoodItem.fromQueryFoodItem(it))
@@ -82,7 +80,6 @@ class QueryFoodItemRepository(var listener: FoodItemRepositoryListener) {
                     insertIntoFoodArray(it)
                 }
                 cleanFoodArray(lastQuery)
-                Log.i("foodArray", foodArray.toString())
                 listener.onFoodItemRepositoryUpdate()
             }
         }

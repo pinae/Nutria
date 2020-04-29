@@ -80,7 +80,7 @@ class TestRoomDaos {
         ) {
             queryFoodItemDao.insertAll(exampleFood)
         }
-        assertEquals("UNIQUE constraint failed: food.foodId " +
+        assertEquals("UNIQUE constraint failed: food.idInNutriaDB " +
                 "(code 1555 SQLITE_CONSTRAINT_PRIMARYKEY[1555])", ex.message)
         assertEquals(exampleFood,
                 queryFoodItemDao.getFood("Backzutat: foo") as QueryFoodItem?)
@@ -164,7 +164,7 @@ class TestRoomDaos {
                 nameAddition = "Hühnerei",
                 amount = 57.0f,
                 calories = 78.09f,
-                reference_amount = 100.0f,
+                referenceAmount = 100.0f,
                 lastLogged = logTime
         )
         assertEquals(Float.NaN, food.total_fat)
@@ -181,7 +181,7 @@ class TestRoomDaos {
                 FoodItem::nameAddition,
                 FoodItem::amount,
                 FoodItem::calories,
-                FoodItem::reference_amount,
+                FoodItem::referenceAmount,
                 FoodItem::lastLogged
         )) {
             assertEquals(property.get(food), property.get(loadedFood))
@@ -198,7 +198,7 @@ class TestRoomDaos {
                 nameAddition = "Hühnerei",
                 amount = 57.0f,
                 calories = 78.09f,
-                reference_amount = 100.0f,
+                referenceAmount = 100.0f,
                 lastLogged = OffsetDateTime.of(2020, 4, 12,
                         12, 3, 23, 123, ZoneOffset.UTC)
         )
@@ -210,7 +210,7 @@ class TestRoomDaos {
                 nameAddition = "Weizenmehl Type 550",
                 amount = 100.0f,
                 calories = 352.0f,
-                reference_amount = 100.0f,
+                referenceAmount = 100.0f,
                 lastLogged = OffsetDateTime.of(2020, 4, 12,
                         23, 59, 59, 123, ZoneOffset.UTC)
         )
@@ -222,7 +222,7 @@ class TestRoomDaos {
                 nameAddition = "Sahnekaramellen",
                 amount = 100.0f,
                 calories = 357.0f,
-                reference_amount = 100.0f,
+                referenceAmount = 100.0f,
                 lastLogged = OffsetDateTime.of(2020, 4, 11,
                         23, 59, 59, 123, ZoneOffset.UTC)
         )
@@ -247,7 +247,7 @@ class TestRoomDaos {
                     FoodItem::nameAddition,
                     FoodItem::amount,
                     FoodItem::calories,
-                    FoodItem::reference_amount,
+                    FoodItem::referenceAmount,
                     FoodItem::lastLogged
             ).forEach {property ->
                 assertEquals(property.get(expected), property.get(actual))

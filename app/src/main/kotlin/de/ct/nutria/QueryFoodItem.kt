@@ -4,16 +4,16 @@ import androidx.room.*
 import java.time.OffsetDateTime
 
 @TypeConverters(IsoTimeConverter::class)
-@Entity(tableName = "food", indices = [Index(value = ["name"])])
+@Entity(tableName = "food", indices = [Index(value = ["combinedName"])])
 data class QueryFoodItem(
-        @PrimaryKey @ColumnInfo(name = "foodId") val foodId: Int,
-        @ColumnInfo(name = "isRecipe") val isRecipe: Boolean,
-        @ColumnInfo(name = "categoryId") val categoryId: Int,
-        @ColumnInfo(name = "name") val name: String?,
-        @ColumnInfo(name = "calories") val calories: Float?,
-        @ColumnInfo(name = "source") val source: String?,
-        @ColumnInfo(name = "ean") val ean: Long?,
-        @ColumnInfo(name = "referenceAmount") val referenceAmount: Float?,
-        @ColumnInfo(name = "relevance") val relevance: Float = 1f,
-        @ColumnInfo(name = "lastLogged") val lastLogged: OffsetDateTime?
+        @PrimaryKey @ColumnInfo(name = "idInNutriaDB") val foodId: Int,
+        val isRecipe: Boolean,
+        val categoryId: Int,
+        @ColumnInfo(name = "combinedName") val name: String?,
+        val calories: Float?,
+        val source: String?,
+        val ean: Long?,
+        val referenceAmount: Float?,
+        val relevance: Float = 1f,
+        val lastLogged: OffsetDateTime?
 )
